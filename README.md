@@ -20,3 +20,7 @@ cd my-react-app
 npm install  # will install packages from packages.json
 npm start    # runs the app
 ```
+
+## Notes
+- index.js should not define components. It should only call components
+- if you want, you can create a components folder and put your components in there
