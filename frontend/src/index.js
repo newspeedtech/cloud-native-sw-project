@@ -2,15 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import App1 from './App1'
-import ClickMe from './ClickMe'
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App1 name="Harrison" title="My Epic App" />
-    <ClickMe />
     <App />
   </React.StrictMode>
 );
