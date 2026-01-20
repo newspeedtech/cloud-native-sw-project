@@ -19,9 +19,9 @@ db = client["the_db"]
 # Test connection
 try:
     client.admin.command('ping')
-    print("Pinged your MongoDB Atlas deployment. Connection successful!")
+    print("Pinged your MongoDB deployment. Connection successful!")
 except Exception as e:
-    print("MongoDB connection failed:", e)
+    print("Failed to ping MongoDB:", e)
 
 #
 # Users

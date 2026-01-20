@@ -27,6 +27,7 @@ export FLASK_APP=app.py
 export MONGO_URI="CONN_STRING_GOES_HERE"  # so app can connect to db
 # Windows
 set FLASK_APP=app.py
+set MONGO_URI="CONN_STRING_GOES_HERE"  # so app can connect to db
 # Runs the backend
 flask run
 ```
@@ -43,7 +44,7 @@ npm start
 - index.js should not define components. It should only call components
 - if you want, you can create a components folder and put your components in there
 
-## Databases
+## Database Collections
 Hardware example:
 {
   "_id": ObjectId,
