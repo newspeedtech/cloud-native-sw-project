@@ -25,9 +25,11 @@ pip install -r requirements.txt
 # Linux/macOS
 export FLASK_APP=app.py
 export MONGO_URI="CONN_STRING_GOES_HERE"  # so app can connect to db
+export JWT_SECRET_KEY="JWT_SECRET_GOES_HERE"  # for user verifcation
 # Windows
 set FLASK_APP=app.py
 set MONGO_URI="CONN_STRING_GOES_HERE"  # so app can connect to db
+set JWT_SECRET_KEY="JWT_SECRET_GOES_HERE"  # for user verifcation
 # Runs the backend
 flask run
 ```

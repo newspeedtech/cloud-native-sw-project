@@ -5,11 +5,28 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    jwt_required,
+    get_jwt_identity
+)
+import datetime
 
-
+# ----------------------
+# Flask setup
+# ----------------------
 app = Flask(__name__)
-CORS(app)  # Allow React dev server to access API despite being differnt 'origins'
+CORS(app)
 
+# JWT configuration
+app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(hours=24)
+jwt = JWTManager(app)
+
+# ----------------------
+# MongoDB setup
+# ----------------------
 uri = os.environ.get("MONGO_URI")
 if not uri:
     raise ValueError("MONGO_URI environment variable not set")
@@ -23,11 +40,12 @@ try:
 except Exception as e:
     print("Failed to ping MongoDB:", e)
 
-#
+# ----------------------
 # Users
-#
+# ----------------------
 @app.route("/users", methods=["POST"])
 def create_user():
+    """Signup route"""
     data = request.json
     username = data.get("username")
     password = data.get("password")
@@ -41,11 +59,30 @@ def create_user():
     pw_hash = generate_password_hash(password)
     user = {"username": username, "pw_hash": pw_hash}
     user_id = db.users.insert_one(user).inserted_id
-    return jsonify({"user_id": str(user_id)}), 201
 
-#
+    # Generate JWT for new user
+    access_token = create_access_token(identity=str(user_id))
+
+    return jsonify({"user_id": str(user_id), "access_token": access_token}), 201
+
+@app.route("/login", methods=["POST"])
+def login():
+    """Login route"""
+    data = request.json
+    username = data.get("username")
+    password = data.get("password")
+
+    user = db.users.find_one({"username": username})
+    if not user or not check_password_hash(user["pw_hash"], password):
+        return jsonify({"error": "Invalid credentials"}), 401
+
+    access_token = create_access_token(identity=str(user["_id"]))
+
+    return jsonify({"user_id": str(user["_id"]), "access_token": access_token})
+
+# ----------------------
 # Hardware
-#
+# ----------------------
 @app.route("/hardware", methods=["GET"])
 def list_hardware():
     items = list(db.hardware.find())
@@ -54,58 +91,62 @@ def list_hardware():
     return jsonify(items)
 
 @app.route("/hardware/<hw_id>/checkout", methods=["POST"])
+@jwt_required()
 def checkout_hardware(hw_id):
     hw = db.hardware.find_one({"_id": ObjectId(hw_id)})
     if not hw:
         return jsonify({"error": "Not found"}), 404
     if hw["available"] <= 0:
         return jsonify({"error": "None available"}), 400
+
+    user_id = get_jwt_identity()  # user making this checkout
     db.hardware.update_one({"_id": ObjectId(hw_id)}, {"$inc": {"available": -1}})
     hw["available"] -= 1
     hw["_id"] = str(hw["_id"])
+    hw["checked_out_by"] = user_id
     return jsonify(hw)
 
 @app.route("/hardware/<hw_id>/checkin", methods=["POST"])
+@jwt_required()
 def checkin_hardware(hw_id):
     hw = db.hardware.find_one({"_id": ObjectId(hw_id)})
     if not hw:
         return jsonify({"error": "Not found"}), 404
     if hw["available"] >= hw["capacity"]:
         return jsonify({"error": "Already full"}), 400
+
     db.hardware.update_one({"_id": ObjectId(hw_id)}, {"$inc": {"available": 1}})
     hw["available"] += 1
     hw["_id"] = str(hw["_id"])
     return jsonify(hw)
 
-#
+# ----------------------
 # Projects
-#
+# ----------------------
 @app.route("/projects", methods=["POST"])
+@jwt_required()
 def create_project():
     data = request.json
     slug = data.get("slug")
     name = data.get("name")
-    owner_id = data.get("owner")  # string of ObjectId
-    user_ids = data.get("users", [])  # list of ObjectId strings
 
-    if not slug or not name or not owner_id:
-        return jsonify({"error": "slug, name, and owner required"}), 400
+    user_id = get_jwt_identity()  # signed-in user
+    if not slug or not name:
+        return jsonify({"error": "slug and name required"}), 400
 
     if db.projects.find_one({"slug": slug}):
         return jsonify({"error": "Slug already exists"}), 400
 
-    user_object_ids = [ObjectId(u) for u in user_ids]
-
     project = {
         "slug": slug,
         "name": name,
-        "owner": ObjectId(owner_id),
-        "users": user_object_ids
+        "owner": ObjectId(user_id),
+        "users": [ObjectId(user_id)]
     }
 
     project_id = db.projects.insert_one(project).inserted_id
 
-    # Auto-generate hardware for this project
+    # Auto-generate hardware
     hw1 = {
         "name": "HardwareSet1",
         "description": f"Auto-generated for project {slug}",
@@ -125,6 +166,7 @@ def create_project():
     return jsonify({"project_id": str(project_id)}), 201
 
 @app.route("/projects/<slug>", methods=["GET"])
+@jwt_required()
 def get_project(slug):
     project = db.projects.find_one({"slug": slug})
     if not project:
@@ -134,7 +176,6 @@ def get_project(slug):
     project["owner"] = str(project["owner"])
     project["users"] = [str(u) for u in project["users"]]
 
-    # Also return hardware for this project
     hardware = list(db.hardware.find({"project_id": ObjectId(project["_id"])}))
     for h in hardware:
         h["_id"] = str(h["_id"])
@@ -142,6 +183,8 @@ def get_project(slug):
 
     return jsonify(project)
 
+# ----------------------
 # Run Flask
+# ----------------------
 if __name__ == "__main__":
     app.run(debug=True)
