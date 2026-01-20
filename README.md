@@ -59,8 +59,7 @@ User example:
 {
   "_id": ObjectId,
   "username": "harrison",
-  "pw_hash": "abc",
-  "pw_salt": "xyz"
+  "pw_hash": "scrypt:32768:8:1$MYvV9..."  # this contains the salt and hash
 }
 
 Project example:
