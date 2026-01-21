@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -24,7 +24,7 @@ export default function Login() {
         localStorage.setItem("token", data.access_token);
         setMessage("Login successful!");
         // Optionally redirect to Create Project or home
-        navigate("/create-project");
+        navigate("/home");
       } else {
         setMessage(data.error || "Login failed");
       }
@@ -60,6 +60,12 @@ export default function Login() {
 
         <button type="submit">Login</button>
       </form>
+      <p>
+      Don't have an account?{' '}
+        <button onClick={() => navigate("/signup")}>
+          Sign Up
+        </button>
+      </p>
       {message && <p>{message}</p>}
     </div>
   );

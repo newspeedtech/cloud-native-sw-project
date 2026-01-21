@@ -1,22 +1,22 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import NavBar from "./components/NavBar";
-import Signup from "./pages/Signup";
-import Login from "./pages/Login";
-import Home from "./pages/Home" ;
+import { Navigate, useState } from "react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import CreateProject from "./pages/CreateProject";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Resources from "./pages/Resources";
+import Signup from "./pages/Signup";
 
 function App() {
+  const [authenticated, setAuthenticated] = useState(false)
   return (
     <Router>
-      
-      <NavBar />
-
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/create-project" element={<CreateProject />} />
+        <Route path="/" element={authenticated ? <Navigate to="/home"/> : <Login setIsLoggedIn={setAuthenticated} /> } />
+        <Route path="/login" element={authenticated ? <Navigate to="/home" /> : <Login setIsLoggedIn={setAuthenticated} />} />
+        <Route path="/signup" element={authenticated ? <Navigate to="/home" /> : <Signup /> } />
+        <Route path="/home" element={authenticated ? <Home setIsLoggedIn={setAuthenticated} /> : <Navigate to="/" /> } />
+        <Route path="/resources" element={authenticated ? <Resources setIsLoggedIn={setAuthenticated} /> : <Navigate to="/" /> } />
+        <Route path="/create-project" element={authenticated ? <CreateProject setIsLoggedIn={setAuthenticated} /> : <Navigate to="/" /> } />
       </Routes>
     </Router>
   );

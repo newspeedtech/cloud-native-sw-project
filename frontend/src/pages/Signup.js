@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const [username, setUsername] = useState("");
@@ -6,6 +7,7 @@ export default function Signup() {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,7 +69,12 @@ export default function Signup() {
           {loading ? "Creating account..." : "Sign Up"}
         </button>
       </form>
-
+      <p>
+      Already have an account?{' '}
+        <button onClick={() => navigate("/login")}>
+          Login
+        </button>
+      </p>
       {message && <p style={{ color: "green" }}>{message}</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
