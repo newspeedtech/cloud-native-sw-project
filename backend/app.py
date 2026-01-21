@@ -25,13 +25,9 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(hours=24)
 jwt = JWTManager(app)
 
 # ----------------------
-# MongoDB setup
+# Database (shared)
 # ----------------------
-uri = os.environ.get("MONGO_URI")
-if not uri:
-    raise ValueError("MONGO_URI environment variable not set")
-client = MongoClient(uri, server_api=ServerApi('1'), serverSelectionTimeoutMS=5000)
-db = client["the_db"]
+from db import db   
 
 # Test connection
 try:
@@ -39,6 +35,12 @@ try:
     print("Pinged your MongoDB deployment. Connection successful!")
 except Exception as e:
     print("Failed to ping MongoDB:", e)
+
+# ----------------------
+# Register Blueprints
+# ----------------------
+from api.project_routes import project_bp
+app.register_blueprint(project_bp)
 
 # ----------------------
 # Users
@@ -119,69 +121,6 @@ def checkin_hardware(hw_id):
     hw["available"] += 1
     hw["_id"] = str(hw["_id"])
     return jsonify(hw)
-
-# ----------------------
-# Projects
-# ----------------------
-@app.route("/projects", methods=["POST"])
-@jwt_required()
-def create_project():
-    data = request.json
-    slug = data.get("slug")
-    name = data.get("name")
-
-    user_id = get_jwt_identity()  # signed-in user
-    if not slug or not name:
-        return jsonify({"error": "slug and name required"}), 400
-
-    if db.projects.find_one({"slug": slug}):
-        return jsonify({"error": "Slug already exists"}), 400
-
-    project = {
-        "slug": slug,
-        "name": name,
-        "owner": ObjectId(user_id),
-        "users": [ObjectId(user_id)]
-    }
-
-    project_id = db.projects.insert_one(project).inserted_id
-
-    # Auto-generate hardware
-    hw1 = {
-        "name": "HardwareSet1",
-        "description": f"Auto-generated for project {slug}",
-        "capacity": 10,
-        "available": 10,
-        "project_id": project_id
-    }
-    hw2 = {
-        "name": "HardwareSet2",
-        "description": f"Auto-generated for project {slug}",
-        "capacity": 10,
-        "available": 10,
-        "project_id": project_id
-    }
-    db.hardware.insert_many([hw1, hw2])
-
-    return jsonify({"project_id": str(project_id)}), 201
-
-@app.route("/projects/<slug>", methods=["GET"])
-@jwt_required()
-def get_project(slug):
-    project = db.projects.find_one({"slug": slug})
-    if not project:
-        return jsonify({"error": "Not found"}), 404
-
-    project["_id"] = str(project["_id"])
-    project["owner"] = str(project["owner"])
-    project["users"] = [str(u) for u in project["users"]]
-
-    hardware = list(db.hardware.find({"project_id": ObjectId(project["_id"])}))
-    for h in hardware:
-        h["_id"] = str(h["_id"])
-    project["hardware"] = hardware
-
-    return jsonify(project)
 
 # ----------------------
 # Run Flask
