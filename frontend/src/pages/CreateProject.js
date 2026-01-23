@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import NavBar from "./../components/NavBar";
 
 export default function CreateProject() {
-  const [slug, setSlug] = useState("");
-  const [name, setName] = useState("");
+  const [projectname, setProjectName] = useState("");
+  const [projectid, setProjectId] = useState("");
+  const [description, setDescription] = useState("");
   const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
@@ -21,14 +23,15 @@ export default function CreateProject() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ slug, name }),
+        body: JSON.stringify({ projectname, projectid, description }),
       });
 
       const data = await res.json();
       if (res.ok) {
         setMessage(`Project created! ID: ${data.project_id}`);
-        setSlug("");
-        setName("");
+        setProjectName("");
+        setProjectId("");
+        setDescription("");
       } else {
         setMessage(data.error || "Error creating project");
       }
@@ -40,29 +43,43 @@ export default function CreateProject() {
 
   return (
     <div>
-      <h2>Create Project</h2>
+      <NavBar />
+      <div style={{textAlign: "center"}}>
+      <h1>Create Project</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Slug:</label>
           <input
-            type="text"
-            value={slug}
-            onChange={(e) => setSlug(e.target.value)}
+            type="text" name="projectname" class="text-field"
+            placeholder="Project Name"
+            value={projectname}
+            onChange={(e) => setProjectName(e.target.value)}
             required
           />
         </div>
+
         <div>
-          <label>Name:</label>
           <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            type="text" name="projectid" class="text-field"
+            placeholder="Project Id"
+            value={projectid}
+            onChange={(e) => setProjectId(e.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <input
+            type="text" name="description" class="text-field"
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             required
           />
         </div>
         <button type="submit">Create Project</button>
       </form>
       {message && <p>{message}</p>}
+    </div>
     </div>
   );
 }

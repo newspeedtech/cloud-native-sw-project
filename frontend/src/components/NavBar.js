@@ -1,13 +1,21 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function NavBar() {
+  const navigate = useNavigate();
+
   return (
-    <nav style={{ marginBottom: "1rem" }}>
-      <Link to="/">Home</Link> |{" "}
-      <Link to="/signup">Signup</Link> |{" "}
-      <Link to="/login">Login</Link> |{" "}
-      <Link to="/create-project">Create Project</Link>
-    </nav>
+    <div>
+      <ul>
+        <li><a href="/home">Home</a></li>
+        <li><a href="/create-project">Create Project</a></li>
+        <li><a href="/projects">Projects</a></li>
+        <li><a href="/resources">Resources</a></li>
+        <li style={{ float: "right" }}>
+          <button class="logout-button" onClick={() => navigate('/login')}>
+            {"Log Out"}
+          </button>
+        </li>
+      </ul>
+    </div>
   );
 }

@@ -1,20 +1,37 @@
-import { useNavigate } from "react-router-dom";
+import NavBar from "./../components/NavBar";
 
 export default function Home( {setAuthenticated} ) {
-  const nav = useNavigate()
   return (
-    <div style={{ textAlign: 'center' }}>
-      <h1>Hardware Checkout System</h1>
-      <p>You are now logged in!</p>
-      <div style={{ marginTop : '30px' }} >
-        <button onClick={() => nav('/create-project')}>Create Project</button>
-        <button onClick={() => nav('/projects')}>View Projects</button>
-        <button onClick={() => nav('/resources')}>View Resources</button>
+    <div>
+      <NavBar />
+      <div style={{textAlign: "center"}}>
+        <h1>Hardware Checkout System</h1>
+        <p>You are now logged in!</p>
       </div>
+      <div className="image-button-container">
+        <div class="image-button">
+          <a href="/create-project">
+            <img src="logo192.png"/>
+          </a>
+          <p> You can create a new project here </p>
+        </div>
+        
+        <div class="image-button">
+          <a href="/projects">
+            <img src="logo192.png"/>
+          </a>
+          <p> View your existing projects here </p>
+        </div>
 
-      <div style={{ marginTop : '30px' }} >
-        <button onClick={() => nav('/')}>Log Out</button>
+        <div class="image-button">
+          <a href="/resources">
+            <img src="logo192.png"/>
+          </a>
+          <p> View your resources for projects here </p>
+        </div>
       </div>
+      
     </div>
+
   );
 }

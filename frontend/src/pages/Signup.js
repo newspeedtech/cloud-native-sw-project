@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const [username, setUsername] = useState("");
+  const [userid, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,14 +40,14 @@ export default function Signup() {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "2rem auto" }}>
-      <h1>Sign Up</h1>
+      <div class="login-form">
+      <h1 style={{ color: "white" }}>Sign Up</h1>
 
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Username</label>
           <input
-            type="text"
+            type="text" name="username" class="text-field"
+            placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
@@ -56,25 +55,32 @@ export default function Signup() {
         </div>
 
         <div>
-          <label>Password</label>
           <input
-            type="password"
+            type="text" name="userid" class="text-field"
+            placeholder="UserId"
+            value={userid}
+            onChange={(e) => setUserId(e.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <input
+            type="password" name="username" class="text-field"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
 
-        <button type="submit" disabled={loading}>
+        <button class="button" type="submit" disabled={loading}>
           {loading ? "Creating account..." : "Sign Up"}
         </button>
       </form>
-      <p>
-      Already have an account?{' '}
-        <button onClick={() => navigate("/login")}>
-          Login
-        </button>
-      </p>
+      <form class="links">
+        <a href="/login">Already have an account?</a>
+      </form>
       {message && <p style={{ color: "green" }}>{message}</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>

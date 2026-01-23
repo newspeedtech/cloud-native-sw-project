@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [username, setUsername] = useState("");
+  const [userid, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
@@ -35,13 +36,14 @@ export default function Login() {
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "2rem auto" }}>
-      <h2>Login</h2>
+      <div class="login-form">
+      <h1 style={{ color: "white" }}>Login</h1>
+
       <form onSubmit={handleSubmit}>
         <div>
-          <label>Username:</label>
           <input
-            type="text"
+            type="text" name="username" class="text-field"
+            placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
@@ -49,23 +51,31 @@ export default function Login() {
         </div>
 
         <div>
-          <label>Password:</label>
           <input
-            type="password"
+            type="text" name="userid" class="text-field"
+            placeholder="UserId"
+            value={userid}
+            onChange={(e) => setUserId(e.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <input
+            type="password" name="username" class="text-field"
+            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
         </div>
-
-        <button type="submit">Login</button>
-      </form>
-      <p>
-      Don't have an account?{' '}
-        <button onClick={() => navigate("/signup")}>
-          Sign Up
+        <button class="button" type="submit" onClick={() => navigate("/home")}>
+          {"Login"}
         </button>
-      </p>
+      </form>
+      <form class="links">
+        <a href="/signup">Don't have an account?</a>
+      </form>
       {message && <p>{message}</p>}
     </div>
   );
