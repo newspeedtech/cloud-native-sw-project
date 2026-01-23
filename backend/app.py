@@ -1,10 +1,10 @@
+
 import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from bson.objectid import ObjectId
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import (
     JWTManager,
     create_access_token,
@@ -12,6 +12,7 @@ from flask_jwt_extended import (
     get_jwt_identity
 )
 import datetime
+import cipher
 
 # ----------------------
 # Flask setup
@@ -56,8 +57,9 @@ def create_user():
     if db.users.find_one({"username": username}):
         return jsonify({"error": "Username already exists"}), 400
 
-    pw_hash = generate_password_hash(password)
-    user = {"username": username, "pw_hash": pw_hash}
+    encrypted_userid = cipher.encrypt(username)
+    encrypted_password = cipher.encrypt(password)
+    user = {"username": encrypted_userid, "password": encrypted_password}
     user_id = db.users.insert_one(user).inserted_id
 
     # Generate JWT for new user
@@ -72,13 +74,13 @@ def login():
     username = data.get("username")
     password = data.get("password")
 
-    user = db.users.find_one({"username": username})
-    if not user or not check_password_hash(user["pw_hash"], password):
+    user = db.users.find_one({"username": cipher.encrypt(username)})
+    if not user or not cipher.decrypt(user["password"]) == password:
         return jsonify({"error": "Invalid credentials"}), 401
 
-    access_token = create_access_token(identity=str(user["_id"]))
+    access_token = create_access_token(identity=str(user["user_id"]))
 
-    return jsonify({"user_id": str(user["_id"]), "access_token": access_token})
+    return jsonify({"user_id": str(user["user_id"]), "access_token": access_token})
 
 # ----------------------
 # Hardware
