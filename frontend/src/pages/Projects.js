@@ -44,8 +44,8 @@ export default function Projects({ setAuthenticated }) {
                 <table className="project-table">
                     <thead>
                         <tr>
-                            <th>Project Slug</th>
-                            <th>Project Name</th>
+                            <th>Name</th>
+                            <th>Slug</th>
                             <th>Description</th>
                             <th>Owner</th>
                             <th>Users</th>
@@ -60,9 +60,9 @@ export default function Projects({ setAuthenticated }) {
                             </tr>
                         ) : (
                             projects.map((project) => (
-                                <tr key={project.projectid}>
+                                <tr key={project.id}>
+                                    <td>{project.name}</td>
                                     <td>{project.slug}</td>
-                                    <td>{project.projectname}</td>
                                     <td>{project.description}</td>
                                     <td>{project.owner}</td>
                                     <td>

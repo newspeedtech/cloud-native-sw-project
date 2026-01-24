@@ -88,6 +88,11 @@ def list_hardware():
     items = list(db.hardware.find())
     for i in items:
         i["_id"] = str(i["_id"])
+        if "project_id" in i:
+            try:
+                i["project_id"] = str(i["project_id"])
+            except Exception:
+                i["project_id"] = None
     return jsonify(items)
 
 @app.route("/hardware/<hw_id>/checkout", methods=["POST"])
@@ -175,8 +180,8 @@ def projects():
         projects = []
         for p in projects_cursor:
             projects.append({
-                "projectid": str(p["_id"]),
-                "projectname": p["name"],
+                "id": str(p["_id"]),
+                "name": p["name"],
                 "slug": p["slug"],
                 "owner": str(p["owner"]),
                 "users": [str(u) for u in p["users"]],
