@@ -16,13 +16,6 @@ app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(hours=24)
 jwt = JWTManager(app)
 
-# Test MongoDB connection
-try:
-    client.admin.command('ping')
-    print("Pinged your MongoDB deployment. Connection successful!")
-except Exception as e:
-    print("Failed to ping MongoDB:", e)
-
 # ----------------------
 # Register Blueprints
 # ----------------------
