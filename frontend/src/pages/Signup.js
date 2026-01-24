@@ -3,6 +3,7 @@ import NavBar from "../components/NavBar";
 
 export default function Signup() {
   const [username, setUsername] = useState("");
+  const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
@@ -20,7 +21,7 @@ export default function Signup() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, user_id: userId, password }),
       });
 
       const data = await res.json();
@@ -31,6 +32,7 @@ export default function Signup() {
 
       setMessage("Signup successful!");
       setUsername("");
+      setUserId("");
       setPassword("");
     } catch (err) {
       setError(err.message);
@@ -58,7 +60,17 @@ export default function Signup() {
 
         <div>
           <input
-            type="password" name="username" class="text-field"
+            type="text" name="user_id" class="text-field"
+            placeholder="User ID"
+            value={userId}
+            onChange={(e) => setUserId(e.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <input
+            type="password" name="password" class="text-field"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}

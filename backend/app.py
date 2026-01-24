@@ -49,21 +49,29 @@ def create_user():
     data = request.json
     username = data.get("username")
     password = data.get("password")
+    chosen_user_id = data.get("user_id")
 
-    if not username or not password:
-        return jsonify({"error": "Username and password required"}), 400
+    if not username or not password or not chosen_user_id:
+        return jsonify({"error": "Username, user_id and password required"}), 400
 
     if db.users.find_one({"username": username}):
         return jsonify({"error": "Username already exists"}), 400
 
+    if db.users.find_one({"user_id": chosen_user_id}):
+        return jsonify({"error": "User ID already exists"}), 400
+
     pw_hash = generate_password_hash(password)
-    user = {"username": username, "pw_hash": pw_hash}
-    user_id = db.users.insert_one(user).inserted_id
+    user = {"username": username, "user_id": chosen_user_id, "pw_hash": pw_hash}
+    user_db_id = db.users.insert_one(user).inserted_id
 
-    # Generate JWT for new user
-    access_token = create_access_token(identity=str(user_id))
+    # Generate JWT for new user (use DB id)
+    access_token = create_access_token(identity=str(user_db_id))
 
-    return jsonify({"user_id": str(user_id), "access_token": access_token}), 201
+    return jsonify({
+        "user_id": chosen_user_id,
+        "user_db_id": str(user_db_id),
+        "access_token": access_token
+    }), 201
 
 @app.route("/login", methods=["POST"])
 def login():
