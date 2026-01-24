@@ -3,7 +3,7 @@ from repositories.user_repo import (
     find_user_by_user_id,
     create_user as create_user_repo
 )
-from werkzeug.security import generate_password_hash, check_password_hash
+from cipher import encrypt, decrypt
 from flask_jwt_extended import create_access_token
 
 
@@ -20,9 +20,9 @@ def signup_user(username, user_id, password):
     if find_user_by_user_id(user_id):
         return False, "User ID already exists", None
     
-    # Hash password and create user
-    pw_hash = generate_password_hash(password)
-    user_db_id = create_user_repo(username, user_id, pw_hash)
+    # Encrypt password and create user
+    pw_encrypted = encrypt(password)
+    user_db_id = create_user_repo(username, user_id, pw_encrypted)
     
     # Generate JWT
     access_token = create_access_token(identity=str(user_db_id))
@@ -41,7 +41,15 @@ def login_user(username, password):
     """
     user = find_user_by_username(username)
     
-    if not user or not check_password_hash(user["pw_hash"], password):
+    if not user:
+        return False, "Invalid credentials", None
+    
+    # Decrypt stored password and compare
+    try:
+        decrypted_pw = decrypt(user["pw_hash"])
+        if decrypted_pw != password:
+            return False, "Invalid credentials", None
+    except:
         return False, "Invalid credentials", None
     
     # Generate JWT
