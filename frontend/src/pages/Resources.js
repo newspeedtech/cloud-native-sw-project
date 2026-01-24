@@ -55,10 +55,10 @@ export default function Resources({ setAuthenticated }) {
 
       if (res.ok) {
         const data = await res.json();
-        // Build map: projectid -> projectname (or slug)
+        // Build map: project id -> project name
         const map = {};
         data.forEach((p) => {
-          map[p.projectid] = p.projectname || p.slug || p.projectid;
+          map[p.id] = p.name || p.slug || p.id;
         });
         setProjectMap(map);
       } else if (res.status === 401) {
