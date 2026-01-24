@@ -3,7 +3,6 @@ import NavBar from "../components/NavBar";
 
 export default function Signup() {
   const [username, setUsername] = useState("");
-  const [userid, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
@@ -53,16 +52,6 @@ export default function Signup() {
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <input
-            type="text" name="userid" class="text-field"
-            placeholder="UserId"
-            value={userid}
-            onChange={(e) => setUserId(e.target.value)}
             required
           />
         </div>

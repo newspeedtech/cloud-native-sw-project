@@ -15,14 +15,6 @@ export default function CreateProject( {setAuthenticated}) {
       return;
     }
 
-    // FOR TESTING ONLY
-    setMessage(`Project created! ID: <random>`);
-    setProjectName("");
-    setProjectId("");
-    setDescription("");
-    return;
-    ///////////////////
-
     try {
       const res = await fetch("http://localhost:5000/projects", {
         method: "POST",
@@ -30,7 +22,11 @@ export default function CreateProject( {setAuthenticated}) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ projectname, projectid, description }),
+        body: JSON.stringify({
+          name: projectname,
+          slug: projectid
+        }),
+
       });
 
       const data = await res.json();
@@ -38,7 +34,6 @@ export default function CreateProject( {setAuthenticated}) {
         setMessage(`Project created! ID: ${data.project_id}`);
         setProjectName("");
         setProjectId("");
-        setDescription("");
       } else {
         setMessage(data.error || "Error creating project");
       }
@@ -71,17 +66,6 @@ export default function CreateProject( {setAuthenticated}) {
             style={{width: "350px"}}
             value={projectid}
             onChange={(e) => setProjectId(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <textarea
-            type="text" name="description" class="text-field"
-            style={{resize: "vertical", width: "350px"}}
-            placeholder="Description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
             required
           />
         </div>

@@ -4,7 +4,6 @@ import NavBar from "../components/NavBar";
 
 export default function Login({ setAuthenticated }) {
   const [username, setUsername] = useState("");
-  const [userid, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
@@ -12,34 +11,28 @@ export default function Login({ setAuthenticated }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // FOR TESTING ONLY --- SKIPPING ALL AUTH
-    setAuthenticated(true);
-    localStorage.setItem('access_token', 'testing-token');
-    setMessage("Login successful!");
-    navigate('/home');
+    try {
+      const res = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
 
-    // try {
-    //   const res = await fetch("http://localhost:5000/login", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify({ username, password }),
-    //   });
+      const data = await res.json();
 
-    //   const data = await res.json();
-
-    //   if (res.ok) {
-    //     // Save JWT to localStorage
-    //     localStorage.setItem("token", data.access_token);
-    //     setAuthenticated(true);
-    //     setMessage("Login successful!");
-    //     navigate('/home');
-    //   } else {
-    //     setMessage(data.error || "Login failed");
-    //   }
-    // } catch (err) {
-    //   console.error(err);
-    //   setMessage("Network error");
-    // }
+      if (res.ok) {
+        // Save JWT to localStorage
+        localStorage.setItem("access_token", data.access_token);
+        setAuthenticated(true);
+        setMessage("Login successful!");
+        navigate('/home');
+      } else {
+        setMessage(data.error || "Login failed");
+      }
+    } catch (err) {
+      console.error(err);
+      setMessage("Network error");
+    }
   };
 
   return (
@@ -55,16 +48,6 @@ export default function Login({ setAuthenticated }) {
             placeholder="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <input
-            type="text" name="userid" class="text-field"
-            placeholder="UserId"
-            value={userid}
-            onChange={(e) => setUserId(e.target.value)}
             required
           />
         </div>

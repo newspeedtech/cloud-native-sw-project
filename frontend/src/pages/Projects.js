@@ -16,27 +16,6 @@ export default function Projects({ setAuthenticated }) {
             return;
         }
 
-        // FOR TESTING ONLY
-        const data = [
-            {
-                projectid: "proj01",
-                projectname: "Project 1",
-                description: "description for project 1",
-                owner: "user123",
-                users: ["user123", "user456", "user789"]
-            },
-            {
-                projectid: "proj02",
-                projectname: "Project 2",
-                description: "description for project 2",
-                owner: "user456",
-                users: ["user111", "user789"]
-            }
-        ];
-        setProjects(data);
-        return;
-        ///////////////////
-
         try {
             const res = await fetch("http://localhost:5000/login", {
                 method: "POST",
