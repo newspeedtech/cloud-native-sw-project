@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-export default function NavBar() {
+export default function NavBar({ authenticated, onLogout }) {
   const navigate = useNavigate();
 
   return (
@@ -11,9 +11,8 @@ export default function NavBar() {
         <li><a href="/projects">Projects</a></li>
         <li><a href="/resources">Resources</a></li>
         <li style={{ float: "right" }}>
-          <button class="logout-button" onClick={() => navigate('/login')}>
-            {"Log Out"}
-          </button>
+          { authenticated ? <button class="logout-button" onClick={onLogout}>Log Out</button>
+            : <button class="logout-button" onClick={() => navigate("/home")}>Log In</button> }
         </li>
       </ul>
     </div>

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import NavBar from "../components/NavBar";
 
-export default function Login() {
+export default function Login({ setAuthenticated }) {
   const [username, setUsername] = useState("");
   const [userid, setUserId] = useState("");
   const [password, setPassword] = useState("");
@@ -11,31 +12,39 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const res = await fetch("http://localhost:5000/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
+    // FOR TESTING ONLY --- SKIPPING ALL AUTH
+    setAuthenticated(true);
+    localStorage.setItem('access_token', 'testing-token');
+    setMessage("Login successful!");
+    navigate('/home');
 
-      const data = await res.json();
+    // try {
+    //   const res = await fetch("http://localhost:5000/login", {
+    //     method: "POST",
+    //     headers: { "Content-Type": "application/json" },
+    //     body: JSON.stringify({ username, password }),
+    //   });
 
-      if (res.ok) {
-        // Save JWT to localStorage
-        localStorage.setItem("token", data.access_token);
-        setMessage("Login successful!");
-        // Optionally redirect to Create Project or home
-        navigate("/home");
-      } else {
-        setMessage(data.error || "Login failed");
-      }
-    } catch (err) {
-      console.error(err);
-      setMessage("Network error");
-    }
+    //   const data = await res.json();
+
+    //   if (res.ok) {
+    //     // Save JWT to localStorage
+    //     localStorage.setItem("token", data.access_token);
+    //     setAuthenticated(true);
+    //     setMessage("Login successful!");
+    //     navigate('/home');
+    //   } else {
+    //     setMessage(data.error || "Login failed");
+    //   }
+    // } catch (err) {
+    //   console.error(err);
+    //   setMessage("Network error");
+    // }
   };
 
   return (
+    <div>
+    <NavBar/>
       <div class="login-form">
       <h1 style={{ color: "white" }}>Login</h1>
 
@@ -69,8 +78,8 @@ export default function Login() {
             required
           />
         </div>
-        <button class="button" type="submit" onClick={() => navigate("/home")}>
-          {"Login"}
+        <button class="button" type="submit">
+          Login
         </button>
       </form>
       <form class="links">
@@ -78,5 +87,6 @@ export default function Login() {
       </form>
       {message && <p>{message}</p>}
     </div>
+  </div>
   );
 }

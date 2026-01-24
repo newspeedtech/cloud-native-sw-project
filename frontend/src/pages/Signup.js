@@ -1,4 +1,5 @@
 import { useState } from "react";
+import NavBar from "../components/NavBar";
 
 export default function Signup() {
   const [username, setUsername] = useState("");
@@ -40,6 +41,8 @@ export default function Signup() {
   };
 
   return (
+    <div>
+    <NavBar/>
       <div class="login-form">
       <h1 style={{ color: "white" }}>Sign Up</h1>
 
@@ -84,5 +87,6 @@ export default function Signup() {
       {message && <p style={{ color: "green" }}>{message}</p>}
       {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
+  </div>
   );
 }

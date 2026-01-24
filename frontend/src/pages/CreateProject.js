@@ -1,7 +1,6 @@
 import { useState } from "react";
-import NavBar from "./../components/NavBar";
 
-export default function CreateProject() {
+export default function CreateProject( {setAuthenticated}) {
   const [projectname, setProjectName] = useState("");
   const [projectid, setProjectId] = useState("");
   const [description, setDescription] = useState("");
@@ -10,11 +9,19 @@ export default function CreateProject() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("access_token");
     if (!token) {
       setMessage("You must be signed in to create a project.");
       return;
     }
+
+    // FOR TESTING ONLY
+    setMessage(`Project created! ID: <random>`);
+    setProjectName("");
+    setProjectId("");
+    setDescription("");
+    return;
+    ///////////////////
 
     try {
       const res = await fetch("http://localhost:5000/projects", {
@@ -43,7 +50,6 @@ export default function CreateProject() {
 
   return (
     <div>
-      <NavBar />
       <div style={{textAlign: "center"}}>
       <h1>Create Project</h1>
       <form onSubmit={handleSubmit}>
@@ -51,6 +57,7 @@ export default function CreateProject() {
           <input
             type="text" name="projectname" class="text-field"
             placeholder="Project Name"
+            style={{width: "350px"}}
             value={projectname}
             onChange={(e) => setProjectName(e.target.value)}
             required
@@ -61,6 +68,7 @@ export default function CreateProject() {
           <input
             type="text" name="projectid" class="text-field"
             placeholder="Project Id"
+            style={{width: "350px"}}
             value={projectid}
             onChange={(e) => setProjectId(e.target.value)}
             required
@@ -68,15 +76,16 @@ export default function CreateProject() {
         </div>
 
         <div>
-          <input
+          <textarea
             type="text" name="description" class="text-field"
+            style={{resize: "vertical", width: "350px"}}
             placeholder="Description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             required
           />
         </div>
-        <button type="submit">Create Project</button>
+        <button class="create-project-button" type="submit">Create Project</button>
       </form>
       {message && <p>{message}</p>}
     </div>
