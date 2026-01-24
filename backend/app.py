@@ -195,12 +195,25 @@ def projects():
         projects_cursor = db.projects.find({"users": ObjectId(user_id)})
         projects = []
         for p in projects_cursor:
+            # Look up owner user_id
+            owner_doc = db.users.find_one({"_id": p["owner"]})
+            owner_user_id = owner_doc.get("user_id") if owner_doc else str(p["owner"])
+            
+            # Look up user_ids for all users
+            user_ids = []
+            for u_id in p["users"]:
+                u_doc = db.users.find_one({"_id": u_id})
+                if u_doc and "user_id" in u_doc:
+                    user_ids.append(u_doc["user_id"])
+                else:
+                    user_ids.append(str(u_id))
+            
             projects.append({
                 "id": str(p["_id"]),
                 "name": p["name"],
                 "slug": p["slug"],
-                "owner": str(p["owner"]),
-                "users": [str(u) for u in p["users"]],
+                "owner": owner_user_id,
+                "users": user_ids,
                 "description": p.get("description", "")
             })
         return jsonify(projects), 200

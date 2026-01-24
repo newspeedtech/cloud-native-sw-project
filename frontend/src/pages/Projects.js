@@ -54,7 +54,7 @@ export default function Projects({ setAuthenticated }) {
                     <tbody>
                         {projects.length === 0 ? (
                             <tr>
-                                <td colSpan="6" style={{ textAlign: 'center' }}>
+                                <td colSpan="5" style={{ textAlign: 'center' }}>
                                     No projects found
                                 </td>
                             </tr>
