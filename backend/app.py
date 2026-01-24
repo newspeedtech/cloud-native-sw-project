@@ -92,8 +92,16 @@ def login():
 # Hardware
 # ----------------------
 @app.route("/hardware", methods=["GET"])
+@jwt_required()
 def list_hardware():
-    items = list(db.hardware.find())
+    user_id = get_jwt_identity()  # logged-in user
+    
+    # Get all projects this user is a member of
+    user_projects = db.projects.find({"users": ObjectId(user_id)})
+    user_project_ids = [ObjectId(str(p["_id"])) for p in user_projects]
+    
+    # Get hardware only from user's projects
+    items = list(db.hardware.find({"project_id": {"$in": user_project_ids}}))
     for i in items:
         i["_id"] = str(i["_id"])
         if "project_id" in i:

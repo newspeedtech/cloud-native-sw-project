@@ -6,10 +6,10 @@ export default function Resources({ setAuthenticated }) {
   const [projectMap, setProjectMap] = useState({}); // projectid -> projectname
 
   useEffect(() => {
-    // Fetch resources and projects so we can show project names
+    // Fetch projects for the map and hardware filtered by backend
     (async () => {
-      await fetchResources();
       await fetchProjects();
+      await fetchResources();
     })();
   }, []);
 
@@ -58,7 +58,7 @@ export default function Resources({ setAuthenticated }) {
         // Build map: projectid -> projectname (or slug)
         const map = {};
         data.forEach((p) => {
-          map[p.id] = p.name || p.slug || p.id;
+          map[p.projectid] = p.projectname || p.slug || p.projectid;
         });
         setProjectMap(map);
       } else if (res.status === 401) {
