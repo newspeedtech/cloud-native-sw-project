@@ -224,6 +224,35 @@ def get_project(slug):
 
     return jsonify(project)
 
+
+@app.route("/projects/<slug>/join", methods=["POST"])
+@jwt_required()
+def join_project(slug):
+    """Join a project by slug"""
+    user_id = get_jwt_identity()
+    
+    project = db.projects.find_one({"slug": slug})
+    if not project:
+        return jsonify({"error": "Project not found"}), 404
+    
+    user_obj_id = ObjectId(user_id)
+    if user_obj_id in project["users"]:
+        return jsonify({"error": "Already a member of this project"}), 400
+    
+    # Add user to project
+    db.projects.update_one(
+        {"_id": project["_id"]},
+        {"$push": {"users": user_obj_id}}
+    )
+    
+    return jsonify({
+        "message": "Successfully joined project",
+        "project_id": str(project["_id"]),
+        "slug": project["slug"],
+        "name": project["name"]
+    }), 200
+    return jsonify(project)
+
 # ----------------------
 # Run Flask
 # ----------------------

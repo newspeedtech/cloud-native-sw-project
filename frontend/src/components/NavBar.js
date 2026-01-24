@@ -8,6 +8,7 @@ export default function NavBar({ authenticated, onLogout }) {
       <ul>
         <li><Link to="/home">Home</Link></li>
         <li><Link to="/create-project">Create Project</Link></li>
+        <li><Link to="/join-project">Join Project</Link></li>
         <li><Link to="/projects">Projects</Link></li>
         <li><Link to="/resources">Resources</Link></li>
 
