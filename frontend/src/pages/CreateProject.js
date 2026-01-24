@@ -2,8 +2,8 @@ import { useState } from "react";
 
 export default function CreateProject( {setAuthenticated}) {
   const [projectname, setProjectName] = useState("");
-  const [projectid, setProjectId] = useState("");
-  const [description, setDescription] = useState("");
+  const [projectslug, setProjectSlug] = useState("");
+  const [projectdescription, setProjectDescription] = useState("");
   const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
@@ -24,7 +24,8 @@ export default function CreateProject( {setAuthenticated}) {
         },
         body: JSON.stringify({
           name: projectname,
-          slug: projectid
+          slug: projectslug,
+          description: projectdescription
         }),
 
       });
@@ -33,7 +34,8 @@ export default function CreateProject( {setAuthenticated}) {
       if (res.ok) {
         setMessage(`Project created! ID: ${data.project_id}`);
         setProjectName("");
-        setProjectId("");
+        setProjectSlug("");
+        setProjectDescription("");
       } else {
         setMessage(data.error || "Error creating project");
       }
@@ -51,7 +53,7 @@ export default function CreateProject( {setAuthenticated}) {
         <div>
           <input
             type="text" name="projectname" class="text-field"
-            placeholder="Project Name"
+            placeholder="name"
             style={{width: "350px"}}
             value={projectname}
             onChange={(e) => setProjectName(e.target.value)}
@@ -61,11 +63,22 @@ export default function CreateProject( {setAuthenticated}) {
 
         <div>
           <input
-            type="text" name="projectid" class="text-field"
-            placeholder="Project Id"
+            type="text" name="projectslug" class="text-field"
+            placeholder="slug"
             style={{width: "350px"}}
-            value={projectid}
-            onChange={(e) => setProjectId(e.target.value)}
+            value={projectslug}
+            onChange={(e) => setProjectSlug(e.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <textarea
+            type="text" name="projectdescription" class="text-field"
+            style={{resize: "vertical", width: "350px"}}
+            placeholder="description"
+            value={projectdescription}
+            onChange={(e) => setProjectDescription(e.target.value)}
             required
           />
         </div>

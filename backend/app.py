@@ -123,47 +123,67 @@ def checkin_hardware(hw_id):
 # ----------------------
 # Projects
 # ----------------------
-@app.route("/projects", methods=["POST"])
+@app.route("/projects", methods=["GET", "POST"])
 @jwt_required()
-def create_project():
-    data = request.json
-    slug = data.get("slug")
-    name = data.get("name")
-
+def projects():
     user_id = get_jwt_identity()  # signed-in user
-    if not slug or not name:
-        return jsonify({"error": "slug and name required"}), 400
 
-    if db.projects.find_one({"slug": slug}):
-        return jsonify({"error": "Slug already exists"}), 400
+    if request.method == "POST":
+        data = request.json
+        slug = data.get("slug")
+        name = data.get("name")
+        description = data.get("description", "")
 
-    project = {
-        "slug": slug,
-        "name": name,
-        "owner": ObjectId(user_id),
-        "users": [ObjectId(user_id)]
-    }
+        if not slug or not name:
+            return jsonify({"error": "slug and name required"}), 400
 
-    project_id = db.projects.insert_one(project).inserted_id
+        if db.projects.find_one({"slug": slug}):
+            return jsonify({"error": "Slug already exists"}), 400
 
-    # Auto-generate hardware
-    hw1 = {
-        "name": "HardwareSet1",
-        "description": f"Auto-generated for project {slug}",
-        "capacity": 10,
-        "available": 10,
-        "project_id": project_id
-    }
-    hw2 = {
-        "name": "HardwareSet2",
-        "description": f"Auto-generated for project {slug}",
-        "capacity": 10,
-        "available": 10,
-        "project_id": project_id
-    }
-    db.hardware.insert_many([hw1, hw2])
+        project = {
+            "slug": slug,
+            "name": name,
+            "description": description,
+            "owner": ObjectId(user_id),
+            "users": [ObjectId(user_id)]
+        }
 
-    return jsonify({"project_id": str(project_id)}), 201
+        project_id = db.projects.insert_one(project).inserted_id
+
+        # Auto-generate hardware
+        hw1 = {
+            "name": "HardwareSet1",
+            "description": f"Auto-generated for project {slug}",
+            "capacity": 10,
+            "available": 10,
+            "project_id": project_id
+        }
+        hw2 = {
+            "name": "HardwareSet2",
+            "description": f"Auto-generated for project {slug}",
+            "capacity": 10,
+            "available": 10,
+            "project_id": project_id
+        }
+        db.hardware.insert_many([hw1, hw2])
+
+        return jsonify({"project_id": str(project_id)}), 201
+
+    elif request.method == "GET":
+        # List all projects for this user
+        projects_cursor = db.projects.find({"users": ObjectId(user_id)})
+        projects = []
+        for p in projects_cursor:
+            projects.append({
+                "projectid": str(p["_id"]),
+                "projectname": p["name"],
+                "slug": p["slug"],
+                "owner": str(p["owner"]),
+                "users": [str(u) for u in p["users"]],
+                "description": p.get("description", "")
+            })
+        return jsonify(projects), 200
+
 
 @app.route("/projects/<slug>", methods=["GET"])
 @jwt_required()

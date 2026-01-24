@@ -17,9 +17,11 @@ export default function Projects({ setAuthenticated }) {
         }
 
         try {
-            const res = await fetch("http://localhost:5000/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
+            const res = await fetch("http://localhost:5000/projects", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
             });
 
             if (res.ok) {
@@ -39,10 +41,10 @@ export default function Projects({ setAuthenticated }) {
             <div style={{ textAlign: "center" }}>
                 <h1>Projects Page</h1>
                 <p>Below are all of your projects</p>
-                <table class="project-table">
+                <table className="project-table">
                     <thead>
                         <tr>
-                            <th>Project ID</th>
+                            <th>Project Slug</th>
                             <th>Project Name</th>
                             <th>Description</th>
                             <th>Owner</th>
@@ -59,7 +61,7 @@ export default function Projects({ setAuthenticated }) {
                         ) : (
                             projects.map((project) => (
                                 <tr key={project.projectid}>
-                                    <td>{project.projectid}</td>
+                                    <td>{project.slug}</td>
                                     <td>{project.projectname}</td>
                                     <td>{project.description}</td>
                                     <td>{project.owner}</td>
