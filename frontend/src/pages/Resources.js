@@ -1,73 +1,74 @@
 import { useEffect, useState } from "react";
+import { useFeedback } from "./../components/useFeedback";
 
 export default function Resources({ setAuthenticated }) {
+  const { feedback, showError } = useFeedback();
   const [resources, setResources] = useState([]);
-  const [message, setMessage] = useState("");
   const [projectMap, setProjectMap] = useState({}); // projectid -> projectname
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch projects for the map and hardware filtered by backend
+    const fetchResources = async () => {
+      const token = localStorage.getItem("access_token");
+
+      try {
+        const res = await fetch("http://localhost:5000/hardware", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setResources(data);
+        } else if (res.status === 401) {
+          setAuthenticated(false);
+          showError("Session expired. Please log in again.");
+        } else {
+          showError("Failed to load resources");
+        }
+      } catch (err) {
+        console.error(err);
+        showError("Network error - can't load resources");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchProjects = async () => {
+      const token = localStorage.getItem("access_token");
+      if (!token) return;
+
+      try {
+        const res = await fetch("http://localhost:5000/projects", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          // Build map: project id -> project name
+          const map = {};
+          data.forEach((p) => {
+            map[p.id] = p.name || p.slug || p.id;
+          });
+          setProjectMap(map);
+        } else if (res.status === 401) {
+          setAuthenticated(false);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     (async () => {
       await fetchProjects();
       await fetchResources();
     })();
-  }, []);
-
-  const fetchResources = async () => {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      setMessage("You must be signed in to view resources.");
-      return;
-    }
-
-    try {
-      const res = await fetch("http://localhost:5000/hardware", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        setResources(data);
-      } else if (res.status === 401) {
-        setAuthenticated(false);
-        setMessage("Session expired. Please log in again.");
-      } else {
-        setMessage("Failed to load resources");
-      }
-    } catch (err) {
-      console.error(err);
-      setMessage("Network error - can't load resources");
-    }
-  };
-
-  const fetchProjects = async () => {
-    const token = localStorage.getItem("access_token");
-    if (!token) return;
-
-    try {
-      const res = await fetch("http://localhost:5000/projects", {
-        method: "GET",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        // Build map: project id -> project name
-        const map = {};
-        data.forEach((p) => {
-          map[p.id] = p.name || p.slug || p.id;
-        });
-        setProjectMap(map);
-      } else if (res.status === 401) {
-        setAuthenticated(false);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  }, [setAuthenticated, showError]);
 
   return (
     <div>
@@ -85,7 +86,14 @@ export default function Resources({ setAuthenticated }) {
             </tr>
           </thead>
           <tbody>
-            {resources.length === 0 ? (
+            {loading ? (
+              <tr>
+                <td colSpan="5" style={{ textAlign: 'center', padding: '15px' }}>
+                  <div className="spinner"></div>
+                  <p>Loading projects...</p>
+                </td>
+              </tr>
+            ) : resources.length === 0 ? (
               <tr>
                 <td colSpan="5" style={{ textAlign: "center" }}>
                   No resources found
@@ -104,8 +112,13 @@ export default function Resources({ setAuthenticated }) {
             )}
           </tbody>
         </table>
-        {message && <p>{message}</p>}
       </div>
+      {feedback.message && (
+        <p style={{width: "350px", marginTop: "30px"}}
+          className={feedback.type === "error" ? "error-message-box" : "success-message-box"}>
+          {feedback.message}
+        </p>
+      )}
     </div>
   );
 }

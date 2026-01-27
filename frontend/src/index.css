@@ -8,10 +8,6 @@ h1 {
   font-family: 'Avantgarde', sans-serif;
   font-variant: small-caps;
 }
-/* ::placeholder {
-    color: #b76c2f;
-    opacity: 0.5;
-}  */
 
 body {
   margin: 0;
@@ -41,6 +37,38 @@ body {
   padding: 20px;
   position: absolute;
   left: 50%;
+}
+
+.error-message-box {
+    color: #FF0000; /* Red color for visibility */
+    background-color: #ffe5e5; /* Light red background */
+    border: 1px solid #FF0000;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.success-message-box {
+    color: #03a400;
+    background-color: #e9ffe5;
+    border: 1px solid #03a400;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.login-message {
+  font-family: 'Avantgarde', sans-serif;
+  font-variant: small-caps;
+  color: #BF5700;
+  font-weight: bold;
+  margin-top: 30px;
+  text-align: center;
+  font-size: 30px;
 }
 
 .login-form {
@@ -178,3 +206,19 @@ ul li a:hover {
     color: #BF5700;
 }
 
+/* LOADING SPINNER */
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #BF5700;
+  border-bottom: 4px solid #BF5700;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

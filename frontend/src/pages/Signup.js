@@ -1,19 +1,21 @@
-import { useState } from "react";
-import NavBar from "../components/NavBar";
+import { useEffect, useState } from "react";
+import { useFeedback } from "./../components/useFeedback";
 
 export default function Signup() {
+  const { feedback, showSuccess, showError } = useFeedback();
   const [username, setUsername] = useState("");
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const returnPath = localStorage.getItem("returnPath");
+    if (!returnPath) {
+      localStorage.removeItem("intendedPage");
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setMessage(null);
-    setError(null);
 
     try {
       const res = await fetch("http://localhost:5000/users", {
@@ -27,26 +29,28 @@ export default function Signup() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Signup failed");
+        throw new Error(data.error || showError("Signup failed"));
       }
 
-      setMessage("Signup successful!");
+      showSuccess("Signup successful! Please log in.");
       setUsername("");
       setUserId("");
       setPassword("");
     } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+      showError(err.message);
     }
   };
 
   return (
     <div>
-    <NavBar/>
       <div class="login-form">
       <h1 style={{ color: "white" }}>Sign Up</h1>
-
+      {feedback.message && (
+          <p style={{marginBottom: "15px"}}
+            className={feedback.type === "error" ? "error-message-box" : "success-message-box"}>
+            {feedback.message}
+          </p>
+      )}
       <form onSubmit={handleSubmit}>
         <div>
           <input
@@ -78,15 +82,13 @@ export default function Signup() {
           />
         </div>
 
-        <button class="button" type="submit" disabled={loading}>
-          {loading ? "Creating account..." : "Sign Up"}
+        <button class="button" type="submit">
+          {"Sign Up"}
         </button>
       </form>
       <form class="links">
         <a href="/login">Already have an account?</a>
       </form>
-      {message && <p style={{ color: "green" }}>{message}</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   </div>
   );

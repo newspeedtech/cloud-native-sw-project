@@ -1,19 +1,16 @@
 import { useState } from "react";
+import { useFeedback } from "./../components/useFeedback";
 
-export default function CreateProject( {setAuthenticated}) {
+export default function CreateProject() {
+  const { feedback, showSuccess, showError } = useFeedback();
   const [projectname, setProjectName] = useState("");
   const [projectslug, setProjectSlug] = useState("");
   const [projectdescription, setProjectDescription] = useState("");
-  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const token = localStorage.getItem("access_token");
-    if (!token) {
-      setMessage("You must be signed in to create a project.");
-      return;
-    }
 
     try {
       const res = await fetch("http://localhost:5000/projects", {
@@ -32,16 +29,16 @@ export default function CreateProject( {setAuthenticated}) {
 
       const data = await res.json();
       if (res.ok) {
-        setMessage(`Project created! ID: ${data.project_id}`);
+        showSuccess(`Project created! ID: ${data.project_id}`);
         setProjectName("");
         setProjectSlug("");
         setProjectDescription("");
       } else {
-        setMessage(data.error || "Error creating project");
+        showError(data.error || "Error creating project");
       }
     } catch (err) {
       console.error(err);
-      setMessage("Network error");
+      showError("Network error");
     }
   };
 
@@ -84,8 +81,13 @@ export default function CreateProject( {setAuthenticated}) {
         </div>
         <button class="create-project-button" type="submit">Create Project</button>
       </form>
-      {message && <p>{message}</p>}
-    </div>
+      {feedback.message && (
+          <p style={{width: "350px", marginTop: "30px"}}
+            className={feedback.type === "error" ? "error-message-box" : "success-message-box"}>
+            {feedback.message}
+          </p>
+      )}
+      </div>
     </div>
   );
 }
