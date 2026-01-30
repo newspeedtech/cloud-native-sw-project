@@ -33,7 +33,7 @@ function App() {
         <Route path="/projects" element={authenticated ? <Projects setAuthenticated={setAuthenticated} /> : <Navigate to="/" /> } />
         <Route path="/resources" element={authenticated ? <Resources setAuthenticated={setAuthenticated} /> : <Navigate to="/" /> } />
         <Route path="/create-project" element={authenticated ? <CreateProject setAuthenticated={setAuthenticated} /> : <Navigate to="/" /> } />
-        <Route path="/join-project" element={<JoinProject setAuthenticated={setAuthenticated} />} />
+        <Route path="/join-project" element={authenticated ? <JoinProject setAuthenticated={setAuthenticated} /> : <Navigate to="/" /> } />
       </Routes>
     </Router>
   );
