@@ -112,7 +112,7 @@ export default function Login({ setAuthenticated }) {
             localStorage.removeItem("intendedPage");
             localStorage.removeItem("returnPath");
             }}
-          >Already have an account?</a>
+          >Don't have an account?</a>
         </form>
       </div>
     </div>
