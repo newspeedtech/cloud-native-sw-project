@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useFeedback } from "./../components/useFeedback";
+import { Loading } from '../components/Loading';
+import useFeedback from "../hooks/useFeedback";
 
 export default function Projects({ setAuthenticated }) {
-  const { feedback, showError } = useFeedback();
+  const { FeedbackDisplay, showError } = useFeedback({width: "350px", marginTop: "30px"});
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -60,8 +61,7 @@ export default function Projects({ setAuthenticated }) {
             {loading ? (
               <tr>
                 <td colSpan="5" style={{ textAlign: 'center', padding: '15px' }}>
-                  <div className="spinner"></div>
-                  <p>Loading projects...</p>
+                  <Loading message = "Loading projects ..."/>
                 </td>
               </tr>
               ) : projects.length === 0 ? (
@@ -92,12 +92,7 @@ export default function Projects({ setAuthenticated }) {
           </tbody>
         </table>
       </div>
-      {feedback.message && (
-        <p style={{width: "350px", marginTop: "30px"}}
-          className={feedback.type === "error" ? "error-message-box" : "success-message-box"}>
-          {feedback.message}
-        </p>
-        )}
+      <FeedbackDisplay style={{width: "350px", marginTop: "30px"}} />
     </div>
   );
 }

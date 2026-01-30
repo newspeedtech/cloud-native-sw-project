@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useFeedback } from "./../components/useFeedback";
+import useFeedback from "../hooks/useFeedback";
 
 export default function Login({ setAuthenticated }) {
-  const { feedback, showError } = useFeedback();
+  const { FeedbackDisplay, showError } = useFeedback({marginBottom: "15px"});
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginMessage, setLoginMessage] = useState("");
@@ -75,12 +75,7 @@ export default function Login({ setAuthenticated }) {
       {loginMessage && (<p className="login-message">{loginMessage}</p>)}
       <div className="login-form">
         <h1 style={{ color: "white" }}>Login</h1>
-        {feedback.message && (
-            <p style={{marginBottom: "15px"}}
-              className={feedback.type === "error" ? "error-message-box" : "success-message-box"}>
-              {feedback.message}
-            </p>
-        )}
+        <FeedbackDisplay />
         <form onSubmit={handleLogin}>
           <div>
             <input

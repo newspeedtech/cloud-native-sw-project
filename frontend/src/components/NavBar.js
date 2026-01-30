@@ -31,11 +31,7 @@ export default function NavBar({ authenticated, onLogout }) {
           ) : (
             <button
               className="logout-button"
-              onClick={() => {
-              localStorage.removeItem("intendedPage");
-              localStorage.removeItem("returnPath");
-              handleLoginClick();
-              }}
+              onClick={() => {handleLoginClick();}}
             >Log In
             </button>
           )}

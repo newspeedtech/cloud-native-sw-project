@@ -44,10 +44,8 @@ body {
     background-color: #ffe5e5; /* Light red background */
     border: 1px solid #FF0000;
     padding: 10px;
-    margin-bottom: 15px;
     border-radius: 5px;
     text-align: center;
-    margin: 0 auto;
 }
 
 .success-message-box {
@@ -55,10 +53,8 @@ body {
     background-color: #e9ffe5;
     border: 1px solid #03a400;
     padding: 10px;
-    margin-bottom: 15px;
     border-radius: 5px;
     text-align: center;
-    margin: 0 auto;
 }
 
 .login-message {

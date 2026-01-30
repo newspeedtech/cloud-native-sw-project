@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useFeedback } from "./../components/useFeedback";
+import useFeedback from "../hooks/useFeedback";
 
 export default function CreateProject() {
-  const { feedback, showSuccess, showError } = useFeedback();
+  const { FeedbackDisplay, showSuccess, showError } = useFeedback({width: "350px", marginTop: "30px"});
   const [projectname, setProjectName] = useState("");
   const [projectslug, setProjectSlug] = useState("");
   const [projectdescription, setProjectDescription] = useState("");
@@ -81,12 +81,7 @@ export default function CreateProject() {
         </div>
         <button class="create-project-button" type="submit">Create Project</button>
       </form>
-      {feedback.message && (
-          <p style={{width: "350px", marginTop: "30px"}}
-            className={feedback.type === "error" ? "error-message-box" : "success-message-box"}>
-            {feedback.message}
-          </p>
-      )}
+      <FeedbackDisplay />
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useFeedback } from "./../components/useFeedback";
+import useFeedback from "../hooks/useFeedback";
 
 export default function Signup() {
-  const { feedback, showSuccess, showError } = useFeedback();
+  const { FeedbackDisplay, showSuccess, showError } = useFeedback({marginBottom: "15px"});
   const [username, setUsername] = useState("");
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
@@ -45,12 +45,7 @@ export default function Signup() {
     <div>
       <div class="login-form">
       <h1 style={{ color: "white" }}>Sign Up</h1>
-      {feedback.message && (
-          <p style={{marginBottom: "15px"}}
-            className={feedback.type === "error" ? "error-message-box" : "success-message-box"}>
-            {feedback.message}
-          </p>
-      )}
+      <FeedbackDisplay />
       <form onSubmit={handleSubmit}>
         <div>
           <input

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Loading } from './Loading';
 
 export default function ProjectRoute({ children }) {
   const [isChecking, setIsChecking] = useState(true);
@@ -31,11 +32,11 @@ export default function ProjectRoute({ children }) {
     }
   }, [navigate, location]);
 
+  // If this doesn't exist then we run the risk of un-authed users
+  // seeing glimpses of the web pages
   if (isChecking) {
     return (
-      <div style={{ textAlign: "center", marginTop: "50px" }}>
-        <p>Loading...</p>
-      </div>
+      <Loading/>
     );
   }
 
