@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { Container, Card, Form, Button } from "react-bootstrap";
 import useFeedback from "../hooks/useFeedback";
 
 export default function CreateProject() {
-  const { FeedbackDisplay, showSuccess, showError } = useFeedback({width: "350px", marginTop: "30px"});
+  const { FeedbackDisplay, showSuccess, showError } = useFeedback();
   const [projectname, setProjectName] = useState("");
   const [projectslug, setProjectSlug] = useState("");
   const [projectdescription, setProjectDescription] = useState("");
@@ -24,7 +25,6 @@ export default function CreateProject() {
           slug: projectslug,
           description: projectdescription
         }),
-
       });
 
       const data = await res.json();
@@ -43,46 +43,59 @@ export default function CreateProject() {
   };
 
   return (
-    <div>
-      <div style={{textAlign: "center"}}>
-      <h1>Create Project</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <input
-            type="text" name="projectname" class="text-field"
-            placeholder="name"
-            style={{width: "350px"}}
-            value={projectname}
-            onChange={(e) => setProjectName(e.target.value)}
-            required
-          />
-        </div>
+    <Container className="d-flex justify-content-center" style={{ paddingTop: '2rem' }}>
+      <Card style={{ width: '100%', maxWidth: '500px' }} className="shadow">
+        <Card.Body>
+          <Card.Title className="text-center mb-4">
+            <h2>Create Project</h2>
+          </Card.Title>
+          
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3" controlId="projectName">
+              <Form.Label>Project Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter project name"
+                value={projectname}
+                onChange={(e) => setProjectName(e.target.value)}
+                required
+              />
+            </Form.Group>
 
-        <div>
-          <input
-            type="text" name="projectslug" class="text-field"
-            placeholder="slug"
-            style={{width: "350px"}}
-            value={projectslug}
-            onChange={(e) => setProjectSlug(e.target.value)}
-            required
-          />
-        </div>
+            <Form.Group className="mb-3" controlId="projectSlug">
+              <Form.Label>Project Slug</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter unique slug (e.g., my-project)"
+                value={projectslug}
+                onChange={(e) => setProjectSlug(e.target.value)}
+                required
+              />
+              <Form.Text className="text-muted">
+                This will be used for others to join your project
+              </Form.Text>
+            </Form.Group>
 
-        <div>
-          <textarea
-            type="text" name="projectdescription" class="text-field"
-            style={{resize: "vertical", width: "350px"}}
-            placeholder="description"
-            value={projectdescription}
-            onChange={(e) => setProjectDescription(e.target.value)}
-            required
-          />
-        </div>
-        <button class="create-project-button" type="submit">Create Project</button>
-      </form>
-      <FeedbackDisplay />
-      </div>
-    </div>
+            <Form.Group className="mb-3" controlId="projectDescription">
+              <Form.Label>Description</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                placeholder="Describe your project"
+                value={projectdescription}
+                onChange={(e) => setProjectDescription(e.target.value)}
+                required
+              />
+            </Form.Group>
+
+            <Button variant="primary" type="submit" className="w-100">
+              Create Project
+            </Button>
+          </Form>
+          
+          <FeedbackDisplay />
+        </Card.Body>
+      </Card>
+    </Container>
   );
 }

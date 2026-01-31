@@ -1,0 +1,203 @@
+/* Auth Pages - Hardware Management Theme */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  background: #111827;
+}
+
+/* Background image - server/hardware */
+.auth-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(4px) brightness(0.3);
+  transform: scale(1.05);
+  z-index: 0;
+}
+
+/* Dark overlay */
+.auth-page::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(17, 24, 39, 0.6);
+  z-index: 1;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 420px;
+  z-index: 10;
+  position: relative;
+}
+
+/* Glassmorphism Card */
+.glass-card {
+  background: rgba(17, 24, 39, 0.9);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  padding: 40px;
+}
+
+/* Header */
+.auth-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.auth-header h1 {
+  color: #f1f5f9;
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.025em;
+}
+
+.auth-header p {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* Form Styles */
+.auth-form .form-label {
+  color: #cbd5e1;
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin-bottom: 8px;
+}
+
+/* Input Fields */
+.glass-input {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  border-radius: 8px !important;
+  padding: 12px 16px !important;
+  color: #f1f5f9 !important;
+  font-size: 1rem !important;
+  transition: border-color 0.2s ease, background 0.2s ease !important;
+}
+
+.glass-input::placeholder {
+  color: #6b7280 !important;
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2) !important;
+  outline: none !important;
+}
+
+/* Auth Button */
+.auth-button {
+  background: #3b82f6 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 12px 24px !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  transition: background 0.2s ease !important;
+}
+
+.auth-button:hover {
+  background: #2563eb !important;
+  color: #fff !important;
+}
+
+.auth-button:active {
+  background: #1d4ed8 !important;
+}
+
+/* Footer */
+.auth-footer {
+  text-align: center;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.auth-footer span {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+
+.auth-link {
+  color: #60a5fa !important;
+  font-weight: 500;
+  text-decoration: none !important;
+}
+
+.auth-link:hover {
+  color: #93c5fd !important;
+  text-decoration: underline !important;
+}
+
+/* Glass Alert - Dark Theme */
+.glass-alert {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border: 1px solid rgba(148, 163, 184, 0.2) !important;
+  color: #f1f5f9 !important;
+  border-radius: 10px !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.glass-alert.alert-danger {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+  color: #fca5a5 !important;
+}
+
+.glass-alert.alert-success {
+  background: rgba(34, 197, 94, 0.15) !important;
+  border-color: rgba(34, 197, 94, 0.3) !important;
+  color: #86efac !important;
+}
+
+.glass-alert.alert-info {
+  background: rgba(59, 130, 246, 0.15) !important;
+  border-color: rgba(59, 130, 246, 0.3) !important;
+  color: #93c5fd !important;
+}
+
+.glass-alert .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+  opacity: 0.6;
+}
+
+.glass-alert .btn-close:hover {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .glass-card {
+    padding: 32px 24px;
+    border-radius: 16px;
+  }
+  
+  .auth-header h1 {
+    font-size: 1.5rem;
+  }
+}

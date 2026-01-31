@@ -1,30 +1,29 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Form, Button, Alert } from 'react-bootstrap';
 import useFeedback from "../hooks/useFeedback";
+import './AuthStyles.css';
 
 export default function Login({ setAuthenticated }) {
-  const { FeedbackDisplay, showError } = useFeedback({marginBottom: "15px"});
+  const { FeedbackDisplay, showError } = useFeedback({ glass: true });
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loginMessage, setLoginMessage] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Check for intended page on component mount and when location changes
   useEffect(() => {
     const returnPath = localStorage.getItem("returnPath");
     const intendedPage = localStorage.getItem("intendedPage");
 
     if (returnPath && intendedPage) {
-      // Only show message if both exist (user was redirected from protected route)
       setLoginMessage(`Please log in prior to viewing ${intendedPage} page`);
     } else {
-      // Clear message and localStorage if user navigated here directly
       setLoginMessage("");
       localStorage.removeItem("intendedPage");
       localStorage.removeItem("returnPath");
     }
-  }, [location]); // Re-run whenever location changes
+  }, [location]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -41,23 +40,19 @@ export default function Login({ setAuthenticated }) {
       if (res.ok) {
         const data = await res.json();
         
-        // Store token and user info in localStorage
         localStorage.setItem("access_token", data.access_token);
         localStorage.setItem("user_id", data.user_id);
         
-        // Update authenticated state
         setAuthenticated(true);
 
         const returnPath = localStorage.getItem("returnPath");
         
-        // Clean up stored values
         localStorage.removeItem("intendedPage");
         
         if (returnPath) {
           localStorage.removeItem("returnPath");
           navigate(returnPath);
         } else {
-          // Default redirect to home if no return path
           navigate("/home");
         }
       } else {
@@ -71,44 +66,66 @@ export default function Login({ setAuthenticated }) {
   };
 
   return (
-    <div>
-      {loginMessage && (<p className="login-message">{loginMessage}</p>)}
-      <div className="login-form">
-        <h1 style={{ color: "white" }}>Login</h1>
-        <FeedbackDisplay />
-        <form onSubmit={handleLogin}>
-          <div>
-            <input
-              type="text"
-              placeholder="Username"
-              className="text-field"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
+    <div className="auth-page">
+      <div className="auth-container">
+        <div className="glass-card">
+          <div className="auth-header">
+            <h1>Welcome Back</h1>
+            <p>Sign in to continue to your account</p>
           </div>
-          <div>
-            <input
-              type="password"
-              placeholder="Password"
-              className="text-field"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+          
+          {loginMessage && (
+            <Alert variant="info" className="glass-alert">
+              {loginMessage}
+            </Alert>
+          )}
+          
+          <FeedbackDisplay />
+          
+          <Form onSubmit={handleLogin} className="auth-form">
+            <Form.Group className="mb-4" controlId="username">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter your username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="glass-input"
+                required
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-4" controlId="password">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="glass-input"
+                required
+              />
+            </Form.Group>
+
+            <Button type="submit" className="auth-button w-100">
+              Sign In
+            </Button>
+          </Form>
+          
+          <div className="auth-footer">
+            <span>Don't have an account? </span>
+            <a 
+              href="/signup"
+              onClick={() => {
+                localStorage.removeItem("intendedPage");
+                localStorage.removeItem("returnPath");
+              }}
+              className="auth-link"
+            >
+              Create one
+            </a>
           </div>
-          <button className="button" type="submit">
-            Login
-          </button>
-        </form>
-        <form className="links">
-          <a href="/signup"
-            onClick={() => {
-            localStorage.removeItem("intendedPage");
-            localStorage.removeItem("returnPath");
-            }}
-          >Don't have an account?</a>
-        </form>
+        </div>
       </div>
     </div>
   );

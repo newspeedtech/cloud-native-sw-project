@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Container, Card, Form, Button } from "react-bootstrap";
 import useFeedback from "../hooks/useFeedback";
 
-export default function JoinProject({setAuthenticated}) {
+export default function JoinProject({ setAuthenticated }) {
   const [slug, setSlug] = useState("");
-  const { FeedbackDisplay, showSuccess, showError } = useFeedback({width: "350px", marginTop: "30px"});
+  const { FeedbackDisplay, showSuccess, showError } = useFeedback();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -25,7 +26,6 @@ export default function JoinProject({setAuthenticated}) {
       if (res.ok) {
         showSuccess(`Successfully joined project: ${data.name}`);
         setSlug("");
-        // Redirect to projects page after a short delay
         setTimeout(() => navigate("/projects"), 1500);
       } else if (res.status === 401) {
         setAuthenticated(false);
@@ -40,28 +40,36 @@ export default function JoinProject({setAuthenticated}) {
   };
 
   return (
-    <div>
-      <div style={{ textAlign: "center" }}>
-        <h1>Join a Project</h1>
-        <p>Enter a project slug to join</p>
+    <Container className="d-flex justify-content-center" style={{ paddingTop: '2rem' }}>
+      <Card style={{ width: '100%', maxWidth: '400px' }} className="shadow">
+        <Card.Body>
+          <Card.Title className="text-center mb-4">
+            <h2>Join a Project</h2>
+          </Card.Title>
+          <p className="text-center text-muted mb-4">
+            Enter a project slug to join an existing project
+          </p>
+          
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-3" controlId="projectSlug">
+              <Form.Label>Project Slug</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter project slug"
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+                required
+              />
+            </Form.Group>
 
-        <form onSubmit={handleSubmit} style={{ marginTop: "2rem" }}>
-          <div>
-            <input
-              type="text"
-              className="text-field"
-              placeholder="Project Slug"
-              value={slug}
-              onChange={(e) => setSlug(e.target.value)}
-              required
-            />
-          </div>
-          <button className="button" type="submit">
-            {"Join Project"}
-          </button>
-        </form>
-        <FeedbackDisplay />
-      </div>
-    </div>
+            <Button variant="primary" type="submit" className="w-100">
+              Join Project
+            </Button>
+          </Form>
+          
+          <FeedbackDisplay />
+        </Card.Body>
+      </Card>
+    </Container>
   );
 }
