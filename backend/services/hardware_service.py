@@ -12,7 +12,7 @@ def list_user_hardware(user_id):
     return get_all_hardware()
 
 
-def checkout_hardware(hw_id, user_id):
+def checkout_hardware(hw_id, user_id, quantity=1):
     """
     Checkout hardware (decrease available count)
     Returns: (success: bool, message: str, data: dict or None)
@@ -22,18 +22,18 @@ def checkout_hardware(hw_id, user_id):
     if not hw:
         return False, "Not found", None
     
-    if hw["available"] <= 0:
-        return False, "None available", None
+    if hw["available"] < quantity:
+        return False, f"Only {hw['available']} available", None
     
-    checkout_repo(hw_id)
-    hw["available"] -= 1
+    checkout_repo(hw_id, quantity)
+    hw["available"] -= quantity
     hw["_id"] = str(hw["_id"])
     hw["checked_out_by"] = user_id
     
-    return True, "Checkout successful", hw
+    return True, f"Checked out {quantity} items", hw
 
 
-def checkin_hardware(hw_id):
+def checkin_hardware(hw_id, quantity=1):
     """
     Check in hardware (increase available count)
     Returns: (success: bool, message: str, data: dict or None)
@@ -43,14 +43,14 @@ def checkin_hardware(hw_id):
     if not hw:
         return False, "Not found", None
     
-    if hw["available"] >= hw["capacity"]:
-        return False, "Already full", None
+    if hw["available"] + quantity > hw["capacity"]:
+        return False, f"Can only check in {hw['capacity'] - hw['available']} more items", None
     
-    checkin_repo(hw_id)
-    hw["available"] += 1
+    checkin_repo(hw_id, quantity)
+    hw["available"] += quantity
     hw["_id"] = str(hw["_id"])
     
-    return True, "Checkin successful", hw
+    return True, f"Checked in {quantity} items", hw
 
 
 def initialize_hardware():

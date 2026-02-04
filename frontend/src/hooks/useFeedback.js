@@ -1,20 +1,20 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Alert } from "react-bootstrap";
 
 export default function useFeedback({ glass = false } = {}) {
   const [feedback, setFeedback] = useState({ message: "", type: "" });
 
-  const showSuccess = (message) => {
+  const showSuccess = useCallback((message) => {
     setFeedback({ message, type: "success" });
-  };
+  }, []);
 
-  const showError = (message) => {
+  const showError = useCallback((message) => {
     setFeedback({ message, type: "error" });
-  };
+  }, []);
 
-  const clearFeedback = () => {
+  const clearFeedback = useCallback(() => {
     setFeedback({ message: "", type: "" });
-  };
+  }, []);
 
   const FeedbackDisplay = () => (
     <>

@@ -24,26 +24,46 @@ def list_hardware():
 def checkout_hardware(hw_id):
     """Checkout hardware (decrease available count)"""
     user_id = get_jwt_identity()
-    success, message, data = checkout_service(hw_id, user_id)
+    data = request.json or {}
+    quantity = data.get("quantity", 1)
+    
+    try:
+        quantity = int(quantity)
+        if quantity <= 0:
+            return jsonify({"error": "Quantity must be positive"}), 400
+    except (ValueError, TypeError):
+        return jsonify({"error": "Invalid quantity"}), 400
+    
+    success, message, result = checkout_service(hw_id, user_id, quantity)
     
     if not success:
         status_code = 404 if message == "Not found" else 400
         return jsonify({"error": message}), status_code
     
-    return jsonify(data)
+    return jsonify(result)
 
 
 @hardware_bp.route("/hardware/<hw_id>/checkin", methods=["POST"])
 @jwt_required()
 def checkin_hardware(hw_id):
     """Check in hardware (increase available count)"""
-    success, message, data = checkin_service(hw_id)
+    data = request.json or {}
+    quantity = data.get("quantity", 1)
+    
+    try:
+        quantity = int(quantity)
+        if quantity <= 0:
+            return jsonify({"error": "Quantity must be positive"}), 400
+    except (ValueError, TypeError):
+        return jsonify({"error": "Invalid quantity"}), 400
+    
+    success, message, result = checkin_service(hw_id, quantity)
     
     if not success:
         status_code = 404 if message == "Not found" else 400
         return jsonify({"error": message}), status_code
     
-    return jsonify(data)
+    return jsonify(result)
 
 
 # You can hit this endpoint with `curl -X POST http://localhost:5000/hardware/initialize`

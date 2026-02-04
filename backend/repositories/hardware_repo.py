@@ -15,14 +15,14 @@ def find_hardware_by_id(hw_id):
     return db.hardware.find_one({"_id": ObjectId(hw_id)})
 
 
-def checkout_hardware_item(hw_id):
-    """Decrease available count by 1"""
-    db.hardware.update_one({"_id": ObjectId(hw_id)}, {"$inc": {"available": -1}})
+def checkout_hardware_item(hw_id, quantity=1):
+    """Decrease available count by quantity"""
+    db.hardware.update_one({"_id": ObjectId(hw_id)}, {"$inc": {"available": -quantity}})
 
 
-def checkin_hardware_item(hw_id):
-    """Increase available count by 1"""
-    db.hardware.update_one({"_id": ObjectId(hw_id)}, {"$inc": {"available": 1}})
+def checkin_hardware_item(hw_id, quantity=1):
+    """Increase available count by quantity"""
+    db.hardware.update_one({"_id": ObjectId(hw_id)}, {"$inc": {"available": quantity}})
 
 
 def initialize_hardware():
