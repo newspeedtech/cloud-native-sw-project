@@ -47,14 +47,19 @@ npm start
 - if you want, you can create a components folder and put your components in there
 
 ## Database Collections
-Hardware example:
+Hardware example (GLOBAL - only 2 sets shared across all projects):
 {
   "_id": ObjectId,
-  "project": A Project,
-  "name": "Raspberry Pi 4",
+  "name": "HWSet1",
+  "capacity": 100,
+  "available": 100
+}
+{
+  "_id": ObjectId,
+  "name": "HWSet2",
   "description": "4GB RAM model",
-  "capacity": 20,
-  "available": 12
+  "capacity": 100,
+  "available": 100
 }
 
 User example:

@@ -3,7 +3,8 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from services.hardware_service import (
     list_user_hardware,
     checkout_hardware as checkout_service,
-    checkin_hardware as checkin_service
+    checkin_hardware as checkin_service,
+    initialize_hardware as initialize_service
 )
 
 hardware_bp = Blueprint("hardware", __name__)
@@ -12,7 +13,7 @@ hardware_bp = Blueprint("hardware", __name__)
 @hardware_bp.route("/hardware", methods=["GET"])
 @jwt_required()
 def list_hardware():
-    """Get all hardware from projects the user is a member of"""
+    """Get all global hardware sets (2 sets shared between all projects)"""
     user_id = get_jwt_identity()
     items = list_user_hardware(user_id)
     return jsonify(items)
@@ -43,3 +44,18 @@ def checkin_hardware(hw_id):
         return jsonify({"error": message}), status_code
     
     return jsonify(data)
+
+
+# You can hit this endpoint with `curl -X POST http://localhost:5000/hardware/initialize`
+@hardware_bp.route("/hardware/initialize", methods=["POST"])
+def initialize_hardware():
+    """Initialize the 2 global hardware sets (clears existing hardware)"""
+    success, message, data = initialize_service()
+    
+    if not success:
+        return jsonify({"error": message}), 500
+    
+    return jsonify({
+        "message": message,
+        **data
+    }), 200

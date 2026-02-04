@@ -64,21 +64,3 @@ def add_user_to_project(project_id, user_id):
         {"$push": {"users": ObjectId(user_id)}}
     )
 
-
-def create_hardware_for_project(slug, project_id):
-    """Create default hardware sets for a project"""
-    hw1 = {
-        "name": "HardwareSet1",
-        "description": f"Auto-generated for project {slug}",
-        "capacity": 10,
-        "available": 10,
-        "project_id": project_id
-    }
-    hw2 = {
-        "name": "HardwareSet2",
-        "description": f"Auto-generated for project {slug}",
-        "capacity": 10,
-        "available": 10,
-        "project_id": project_id
-    }
-    db.hardware.insert_many([hw1, hw2])

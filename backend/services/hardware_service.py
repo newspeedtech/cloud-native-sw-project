@@ -1,16 +1,15 @@
 from repositories.hardware_repo import (
-    get_hardware_by_project_ids,
+    get_all_hardware,
     find_hardware_by_id,
     checkout_hardware_item as checkout_repo,
-    checkin_hardware_item as checkin_repo
+    checkin_hardware_item as checkin_repo,
+    initialize_hardware as initialize_repo
 )
-from repositories.project_repo import get_user_project_ids
 
 
 def list_user_hardware(user_id):
-    """Get all hardware from projects the user is a member of"""
-    project_ids = get_user_project_ids(user_id)
-    return get_hardware_by_project_ids(project_ids)
+    """Get all hardware (global - shared between all projects)"""
+    return get_all_hardware()
 
 
 def checkout_hardware(hw_id, user_id):
@@ -50,5 +49,22 @@ def checkin_hardware(hw_id):
     checkin_repo(hw_id)
     hw["available"] += 1
     hw["_id"] = str(hw["_id"])
+    
+    return True, "Checkin successful", hw
+
+
+def initialize_hardware():
+    """
+    Initialize the 2 global hardware sets (clears existing hardware)
+    Returns: (success: bool, message: str, data: dict or None)
+    """
+    try:
+        deleted_count, created_count = initialize_repo()
+        return True, "Hardware initialized successfully", {
+            "deleted": deleted_count,
+            "created": created_count
+        }
+    except Exception as e:
+        return False, str(e), None
     
     return True, "Checkin successful", hw

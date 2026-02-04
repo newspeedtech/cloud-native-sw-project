@@ -2,22 +2,20 @@ from repositories.project_repo import (
     find_project_by_slug,
     create_project as create_project_repo,
     get_user_projects as get_user_projects_repo,
-    add_user_to_project as add_user_repo,
-    create_hardware_for_project
+    add_user_to_project as add_user_repo
 )
 from bson import ObjectId
 
 
 def create_new_project(slug, name, description, user_id):
     """
-    Create a new project with default hardware
+    Create a new project
     Returns: (success: bool, message: str, data: dict or None)
     """
     if find_project_by_slug(slug):
         return False, "Slug already exists", None
     
     project_id = create_project_repo(slug, name, description, user_id)
-    create_hardware_for_project(slug, project_id)
     
     return True, "Project created", {"project_id": str(project_id)}
 
