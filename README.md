@@ -41,44 +41,9 @@ npm install  # will install packages from packages.json
 # Runs the frontend
 npm start
 ```
+
 ### Tools
-Run this command to re-initialize the hardware. This will wipe all hardware, and add 2 new ones with
+Run this command to re-initialize the hardware. This will wipe all hardware, and add 2 brand new ones.
 ```
 curl -X POST http://localhost:5000/hardware/initialize
 ```
-
-## Notes
-- index.js should not define components. It should only call components
-- if you want, you can create a components folder and put your components in there
-
-## Database Collections
-Hardware example (GLOBAL - only 2 sets shared across all projects):
-{
-  "_id": ObjectId,
-  "name": "HWSet1",
-  "capacity": 100,
-  "available": 100
-}
-{
-  "_id": ObjectId,
-  "name": "HWSet2",
-  "description": "4GB RAM model",
-  "capacity": 100,
-  "available": 100
-}
-
-User example:
-{
-  "_id": ObjectId,
-  "username": "harrison",
-  "pw_hash": "scrypt:32768:8:1$MYvV9..."  # this contains the salt and hash
-}
-
-Project example:
-{
-  "_id": ObjectId,
-  "slug": "project1",  # the user facing 'project id'. unique
-  "name": "Cool Project",
-  "users": List of User ObjectIDs
-  "owner": A User
-}
