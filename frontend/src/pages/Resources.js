@@ -5,9 +5,11 @@ import useFeedback from "../hooks/useFeedback";
 export default function Resources({ setAuthenticated }) {
   const { FeedbackDisplay, showError, showSuccess } = useFeedback();
   const [resources, setResources] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [quantities, setQuantities] = useState({});
   const [processing, setProcessing] = useState({});
+  const [selectedProject, setSelectedProject] = useState({});
 
   useEffect(() => {
     const fetchResources = async () => {
@@ -44,7 +46,41 @@ export default function Resources({ setAuthenticated }) {
       }
     };
 
-    fetchResources();
+    const fetchProjects = async () => {
+      const token = localStorage.getItem("access_token");
+      if (!token) return;
+
+      try {
+        const res = await fetch("http://localhost:5000/projects", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setProjects(data);
+          // Set first project as default for all hardware
+          if (data.length > 0) {
+            const initialProjects = {};
+            data.forEach((p) => {
+              resources.forEach((r) => {
+                initialProjects[r._id] = p.id;
+              });
+            });
+            setSelectedProject(initialProjects);
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    const loadAll = async () => {
+      await fetchResources();
+      await fetchProjects();
+    };
+
+    loadAll();
   }, [setAuthenticated, showError]);
 
   const getAvailabilityVariant = (available, capacity) => {
@@ -77,6 +113,12 @@ export default function Resources({ setAuthenticated }) {
   const handleCheckout = async (hwId) => {
     const token = localStorage.getItem("access_token");
     const qty = quantities[hwId]?.checkout ?? 1;
+    const projectId = selectedProject[hwId];
+
+    if (!projectId) {
+      showError("Please select a project");
+      return;
+    }
 
     if (isCheckoutDisabled(resources.find((r) => r._id === hwId))) {
       showError("Invalid quantity");
@@ -92,7 +134,7 @@ export default function Resources({ setAuthenticated }) {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ quantity: qty }),
+        body: JSON.stringify({ quantity: qty, project_id: projectId }),
       });
 
       if (res.ok) {
@@ -124,6 +166,12 @@ export default function Resources({ setAuthenticated }) {
   const handleCheckin = async (hwId) => {
     const token = localStorage.getItem("access_token");
     const qty = quantities[hwId]?.checkin ?? 1;
+    const projectId = selectedProject[hwId];
+
+    if (!projectId) {
+      showError("Please select a project");
+      return;
+    }
 
     if (isCheckinDisabled(resources.find((r) => r._id === hwId))) {
       showError("Invalid quantity");
@@ -139,7 +187,7 @@ export default function Resources({ setAuthenticated }) {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ quantity: qty }),
+        body: JSON.stringify({ quantity: qty, project_id: projectId }),
       });
 
       if (res.ok) {
@@ -184,6 +232,7 @@ export default function Resources({ setAuthenticated }) {
             <th>Description</th>
             <th>Capacity</th>
             <th>Available</th>
+            <th>Project</th>
             <th>Checkout</th>
             <th>Checkin</th>
           </tr>
@@ -191,7 +240,7 @@ export default function Resources({ setAuthenticated }) {
         <tbody>
           {loading ? (
             <tr>
-              <td colSpan="6" className="text-center py-4">
+              <td colSpan="7" className="text-center py-4">
                 <Spinner animation="border" role="status" variant="primary">
                   <span className="visually-hidden">Loading...</span>
                 </Spinner>
@@ -200,7 +249,7 @@ export default function Resources({ setAuthenticated }) {
             </tr>
           ) : resources.length === 0 ? (
             <tr>
-              <td colSpan="6" className="text-center py-4 text-muted">
+              <td colSpan="7" className="text-center py-4 text-muted">
                 No resources found
               </td>
             </tr>
@@ -216,6 +265,37 @@ export default function Resources({ setAuthenticated }) {
                   <Badge bg={getAvailabilityVariant(r.available, r.capacity)}>
                     {r.available} / {r.capacity}
                   </Badge>
+                </td>
+                <td>
+                  <Form.Select
+                    value={selectedProject[r._id] || ""}
+                    onChange={(e) =>
+                      setSelectedProject((prev) => ({
+                        ...prev,
+                        [r._id]: e.target.value,
+                      }))
+                    }
+                    size="sm"
+                  >
+                    <option value="">Select project</option>
+                    {projects.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </Form.Select>
+                  {r.checkouts && Object.keys(r.checkouts).length > 0 && (
+                    <div className="mt-2 text-muted small">
+                      {Object.entries(r.checkouts).map(([projId, count]) => {
+                        const proj = projects.find((p) => p.id === projId);
+                        return count > 0 ? (
+                          <div key={projId}>
+                            {proj?.name}: {count}
+                          </div>
+                        ) : null;
+                      })}
+                    </div>
+                  )}
                 </td>
                 <td>
                   <div className="d-flex gap-2">

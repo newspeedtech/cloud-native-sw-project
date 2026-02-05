@@ -12,7 +12,7 @@ def list_user_hardware(user_id):
     return get_all_hardware()
 
 
-def checkout_hardware(hw_id, user_id, quantity=1):
+def checkout_hardware(hw_id, user_id, quantity=1, project_id=None):
     """
     Checkout hardware (decrease available count)
     Returns: (success: bool, message: str, data: dict or None)
@@ -25,15 +25,19 @@ def checkout_hardware(hw_id, user_id, quantity=1):
     if hw["available"] < quantity:
         return False, f"Only {hw['available']} available", None
     
-    checkout_repo(hw_id, quantity)
+    checkout_repo(hw_id, quantity, project_id)
     hw["available"] -= quantity
     hw["_id"] = str(hw["_id"])
+    if "checkouts" not in hw:
+        hw["checkouts"] = {}
+    if project_id:
+        hw["checkouts"][project_id] = hw["checkouts"].get(project_id, 0) + quantity
     hw["checked_out_by"] = user_id
     
     return True, f"Checked out {quantity} items", hw
 
 
-def checkin_hardware(hw_id, quantity=1):
+def checkin_hardware(hw_id, quantity=1, project_id=None):
     """
     Check in hardware (increase available count)
     Returns: (success: bool, message: str, data: dict or None)
@@ -46,9 +50,20 @@ def checkin_hardware(hw_id, quantity=1):
     if hw["available"] + quantity > hw["capacity"]:
         return False, f"Can only check in {hw['capacity'] - hw['available']} more items", None
     
-    checkin_repo(hw_id, quantity)
+    # Check if project has enough checked out to return
+    if project_id:
+        checkouts = hw.get("checkouts", {})
+        project_checkout = checkouts.get(project_id, 0)
+        if project_checkout < quantity:
+            return False, f"Project only has {project_checkout} items checked out", None
+    
+    checkin_repo(hw_id, quantity, project_id)
     hw["available"] += quantity
     hw["_id"] = str(hw["_id"])
+    if "checkouts" not in hw:
+        hw["checkouts"] = {}
+    if project_id:
+        hw["checkouts"][project_id] = max(0, hw["checkouts"].get(project_id, 0) - quantity)
     
     return True, f"Checked in {quantity} items", hw
 

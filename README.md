@@ -41,6 +41,11 @@ npm install  # will install packages from packages.json
 # Runs the frontend
 npm start
 ```
+### Tools
+Run this command to re-initialize the hardware. This will wipe all hardware, and add 2 new ones with
+```
+curl -X POST http://localhost:5000/hardware/initialize
+```
 
 ## Notes
 - index.js should not define components. It should only call components

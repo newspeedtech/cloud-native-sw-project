@@ -26,6 +26,10 @@ def checkout_hardware(hw_id):
     user_id = get_jwt_identity()
     data = request.json or {}
     quantity = data.get("quantity", 1)
+    project_id = data.get("project_id")
+    
+    if not project_id:
+        return jsonify({"error": "project_id required"}), 400
     
     try:
         quantity = int(quantity)
@@ -34,7 +38,7 @@ def checkout_hardware(hw_id):
     except (ValueError, TypeError):
         return jsonify({"error": "Invalid quantity"}), 400
     
-    success, message, result = checkout_service(hw_id, user_id, quantity)
+    success, message, result = checkout_service(hw_id, user_id, quantity, project_id)
     
     if not success:
         status_code = 404 if message == "Not found" else 400
@@ -49,6 +53,10 @@ def checkin_hardware(hw_id):
     """Check in hardware (increase available count)"""
     data = request.json or {}
     quantity = data.get("quantity", 1)
+    project_id = data.get("project_id")
+    
+    if not project_id:
+        return jsonify({"error": "project_id required"}), 400
     
     try:
         quantity = int(quantity)
@@ -57,7 +65,7 @@ def checkin_hardware(hw_id):
     except (ValueError, TypeError):
         return jsonify({"error": "Invalid quantity"}), 400
     
-    success, message, result = checkin_service(hw_id, quantity)
+    success, message, result = checkin_service(hw_id, quantity, project_id)
     
     if not success:
         status_code = 404 if message == "Not found" else 400
