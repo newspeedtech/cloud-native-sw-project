@@ -138,10 +138,11 @@ export default function Resources({ setAuthenticated }) {
       });
 
       if (res.ok) {
+        const updatedHw = await res.json();
         showSuccess(`Checked out ${qty} items`);
         setResources((prev) =>
           prev.map((r) =>
-            r._id === hwId ? { ...r, available: r.available - qty } : r
+            r._id === hwId ? updatedHw : r
           )
         );
         setQuantities((prev) => ({
@@ -191,10 +192,11 @@ export default function Resources({ setAuthenticated }) {
       });
 
       if (res.ok) {
+        const updatedHw = await res.json();
         showSuccess(`Checked in ${qty} items`);
         setResources((prev) =>
           prev.map((r) =>
-            r._id === hwId ? { ...r, available: r.available + qty } : r
+            r._id === hwId ? updatedHw : r
           )
         );
         setQuantities((prev) => ({

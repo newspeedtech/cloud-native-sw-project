@@ -26,15 +26,14 @@ def checkout_hardware(hw_id, user_id, quantity=1, project_id=None):
         return False, f"Only {hw['available']} available", None
     
     checkout_repo(hw_id, quantity, project_id)
-    hw["available"] -= quantity
-    hw["_id"] = str(hw["_id"])
-    if "checkouts" not in hw:
-        hw["checkouts"] = {}
-    if project_id:
-        hw["checkouts"][project_id] = hw["checkouts"].get(project_id, 0) + quantity
-    hw["checked_out_by"] = user_id
     
-    return True, f"Checked out {quantity} items", hw
+    # Fetch updated hardware to get current checkouts
+    updated_hw = find_hardware_by_id(hw_id)
+    updated_hw["_id"] = str(updated_hw["_id"])
+    if "checkouts" not in updated_hw:
+        updated_hw["checkouts"] = {}
+    
+    return True, f"Checked out {quantity} items", updated_hw
 
 
 def checkin_hardware(hw_id, quantity=1, project_id=None):
@@ -58,14 +57,14 @@ def checkin_hardware(hw_id, quantity=1, project_id=None):
             return False, f"Project only has {project_checkout} items checked out", None
     
     checkin_repo(hw_id, quantity, project_id)
-    hw["available"] += quantity
-    hw["_id"] = str(hw["_id"])
-    if "checkouts" not in hw:
-        hw["checkouts"] = {}
-    if project_id:
-        hw["checkouts"][project_id] = max(0, hw["checkouts"].get(project_id, 0) - quantity)
     
-    return True, f"Checked in {quantity} items", hw
+    # Fetch updated hardware to get current checkouts
+    updated_hw = find_hardware_by_id(hw_id)
+    updated_hw["_id"] = str(updated_hw["_id"])
+    if "checkouts" not in updated_hw:
+        updated_hw["checkouts"] = {}
+    
+    return True, f"Checked in {quantity} items", updated_hw
 
 
 def initialize_hardware():
@@ -81,5 +80,3 @@ def initialize_hardware():
         }
     except Exception as e:
         return False, str(e), None
-    
-    return True, "Checkin successful", hw

@@ -7,6 +7,9 @@ def get_all_hardware():
     items = list(db.hardware.find({}))
     for i in items:
         i["_id"] = str(i["_id"])
+        # Ensure checkouts field exists, defaulting to empty dict
+        if "checkouts" not in i:
+            i["checkouts"] = {}
     return items
 
 
@@ -41,7 +44,7 @@ def initialize_hardware():
     
     # Create the 2 global hardware sets
     insert_result = db.hardware.insert_many([
-        {"name": "HWSet1", "capacity": 100, "description": "This is hardware set 1.", "available": 100},
-        {"name": "HWSet2", "capacity": 100, "description": "This is hardware set 2.", "available": 100}
+        {"name": "HWSet1", "capacity": 100, "description": "This is hardware set 1.", "available": 100, "checkouts": {}},
+        {"name": "HWSet2", "capacity": 100, "description": "This is hardware set 2.", "available": 100, "checkouts": {}}
     ])
     return delete_result.deleted_count, len(insert_result.inserted_ids)
