@@ -290,9 +290,9 @@ export default function Resources({ setAuthenticated }) {
                     <div className="mt-2 text-muted small">
                       {Object.entries(r.checkouts).map(([projId, count]) => {
                         const proj = projects.find((p) => p.id === projId);
-                        return count > 0 ? (
+                        return count > 0 && proj ? (
                           <div key={projId}>
-                            {proj?.name}: {count}
+                            {proj.name}: {count}
                           </div>
                         ) : null;
                       })}
