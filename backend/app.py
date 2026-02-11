@@ -71,9 +71,9 @@ except Exception as e:
 # ----------------------
 # Register Blueprints
 # ----------------------
-from api.user_routes import user_bp
-from api.project_routes import project_bp
-from api.hardware_routes import hardware_bp
+from backend.api.user_routes import user_bp
+from backend.api.project_routes import project_bp
+from backend.api.hardware_routes import hardware_bp
 
 app.register_blueprint(user_bp)
 app.register_blueprint(project_bp)
