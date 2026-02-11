@@ -13,7 +13,7 @@ export default function JoinProject({ setAuthenticated }) {
 
     const token = localStorage.getItem("access_token");
     try {
-      const res = await fetch(`http://localhost:5000/projects/${slug}/join`, {
+      const res = await fetch(`http://localhost:5001/projects/${slug}/join`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

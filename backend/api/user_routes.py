@@ -1,11 +1,18 @@
+print("🔥 USER ROUTES FILE LOADED 🔥", __file__)
 from flask import Blueprint, request, jsonify
 from services.user_service import signup_user, login_user
 
 user_bp = Blueprint("users", __name__)
 
 
-@user_bp.route("/users", methods=["POST"])
+@user_bp.route("/users", methods=["POST", "OPTIONS"])
 def create_user():
+    print("🟢 USERS ROUTE HIT:", request.method)
+
+    # Handle preflight request
+    if request.method == "OPTIONS":
+        return "", 200
+
     """Signup route"""
     data = request.json
     username = data.get("username")

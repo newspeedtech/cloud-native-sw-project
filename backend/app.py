@@ -4,12 +4,41 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 import datetime
 from db import db, client
+import os
+print("MONGO_URI =", os.getenv("MONGO_URI"))
+print("🔥 FLASK FILE LOADED 🔥")
 
 # ----------------------
 # Flask setup
 # ----------------------
-app = Flask(__name__)
-CORS(app)
+app = Flask(
+    __name__,
+    static_folder="../frontend/build",
+    static_url_path=""
+)
+
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
+
+@app.after_request
+def after_request(response):
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    return response
+""" CORS(
+    app,
+    supports_credentials=True,
+    allow_headers=["Content-Type", "Authorization"],
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+) """
+
+from flask import request
+
+@app.before_request
+def debug_all_requests():
+    print("➡️", request.method, request.path) 
+
+# ----------------------
 
 # JWT configuration
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET_KEY")
@@ -51,7 +80,24 @@ app.register_blueprint(project_bp)
 app.register_blueprint(hardware_bp)
 
 # ----------------------
+# # Serve React frontend (production)
+# ----------------------
+
+from flask import send_from_directory
+
+@app.route("/")
+def serve():
+    return send_from_directory(app.static_folder, "index.html")
+
+@app.route("/<path:path>")
+def static_proxy(path):
+    return send_from_directory(app.static_folder, path)
+
+
+# ----------------------
 # Run Flask
 # ----------------------
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host="0.0.0.0", port=port, debug=True)
+

@@ -14,7 +14,7 @@ export default function CreateProject() {
     const token = localStorage.getItem("access_token");
 
     try {
-      const res = await fetch("http://localhost:5000/projects", {
+      const res = await fetch("http://localhost:5001/projects", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
