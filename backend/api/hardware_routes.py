@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from services.hardware_service import (
+from backend.services.hardware_service import (
     list_user_hardware,
     checkout_hardware as checkout_service,
     checkin_hardware as checkin_service,

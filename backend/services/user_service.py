@@ -1,4 +1,4 @@
-from repositories.user_repo import (
+from backend.repositories.user_repo import (
     find_user_by_username,
     find_user_by_user_id,
     create_user as create_user_repo

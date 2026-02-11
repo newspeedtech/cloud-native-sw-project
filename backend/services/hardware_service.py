@@ -1,4 +1,4 @@
-from repositories.hardware_repo import (
+from backend.repositories.hardware_repo import (
     get_all_hardware,
     find_hardware_by_id,
     checkout_hardware_item as checkout_repo,

@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from services.project_service import (
+from backend.services.project_service import (
     create_new_project,
     get_user_projects as get_user_projects_service,
     get_project_details,

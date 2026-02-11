@@ -1,4 +1,4 @@
-from repositories.project_repo import (
+from backend.repositories.project_repo import (
     find_project_by_slug,
     create_project as create_project_repo,
     get_user_projects as get_user_projects_repo,

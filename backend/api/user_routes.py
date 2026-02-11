@@ -1,6 +1,6 @@
 print("🔥 USER ROUTES FILE LOADED 🔥", __file__)
 from flask import Blueprint, request, jsonify
-from services.user_service import signup_user, login_user
+from backend.services.user_service import signup_user, login_user
 
 user_bp = Blueprint("users", __name__)
 
