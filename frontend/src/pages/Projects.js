@@ -12,7 +12,7 @@ export default function Projects({ setAuthenticated }) {
     const getProjects = async () => {
       const token = localStorage.getItem("access_token");
       try {
-        const res = await fetch("http://localhost:5001/projects", {
+        const res = await fetch("/api/projects", {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`
@@ -37,7 +37,7 @@ export default function Projects({ setAuthenticated }) {
     const getHardware = async () => {
       const token = localStorage.getItem("access_token");
       try {
-        const res = await fetch("http://localhost:5001/hardware", {
+        const res = await fetch("/api/hardware", {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`

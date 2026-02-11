@@ -5,7 +5,7 @@ from backend.services.user_service import signup_user, login_user
 user_bp = Blueprint("users", __name__)
 
 
-@user_bp.route("/users", methods=["POST", "OPTIONS"])
+@user_bp.route("/api/users", methods=["POST", "OPTIONS"])
 def create_user():
     print("🟢 USERS ROUTE HIT:", request.method)
 
@@ -30,7 +30,7 @@ def create_user():
     return jsonify(data), 201
 
 
-@user_bp.route("/login", methods=["POST"])
+@user_bp.route("/api/login", methods=["POST"])
 def login():
     """Login route"""
     data = request.json

@@ -16,7 +16,7 @@ export default function Resources({ setAuthenticated }) {
       const token = localStorage.getItem("access_token");
 
       try {
-        const res = await fetch("http://localhost:5001/hardware", {
+        const res = await fetch("/api/hardware", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -51,7 +51,7 @@ export default function Resources({ setAuthenticated }) {
       if (!token) return;
 
       try {
-        const res = await fetch("http://localhost:5001/projects", {
+        const res = await fetch("/api/projects", {
           method: "GET",
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -128,7 +128,7 @@ export default function Resources({ setAuthenticated }) {
     setProcessing((prev) => ({ ...prev, [hwId]: true }));
 
     try {
-      const res = await fetch(`http://localhost:5001/hardware/${hwId}/checkout`, {
+      const res = await fetch(`/api/hardware/${hwId}/checkout`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -182,7 +182,7 @@ export default function Resources({ setAuthenticated }) {
     setProcessing((prev) => ({ ...prev, [`${hwId}-checkin`]: true }));
 
     try {
-      const res = await fetch(`http://localhost:5001/hardware/${hwId}/checkin`, {
+      const res = await fetch(`/api/hardware/${hwId}/checkin`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

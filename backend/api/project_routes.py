@@ -10,7 +10,7 @@ from backend.services.project_service import (
 project_bp = Blueprint("projects", __name__)
 
 
-@project_bp.route("/projects", methods=["GET", "POST"])
+@project_bp.route("/api/projects", methods=["GET", "POST"])
 @jwt_required()
 def projects():
     """Get all user projects or create a new project"""
@@ -37,7 +37,7 @@ def projects():
     return jsonify(projects), 200
 
 
-@project_bp.route("/projects/<slug>", methods=["GET"])
+@project_bp.route("/api/projects/<slug>", methods=["GET"])
 @jwt_required()
 def get_project(slug):
     """Get project details by slug"""
@@ -49,7 +49,7 @@ def get_project(slug):
     return jsonify(data)
 
 
-@project_bp.route("/projects/<slug>/join", methods=["POST"])
+@project_bp.route("/api/projects/<slug>/join", methods=["POST"])
 @jwt_required()
 def join_project(slug):
     """Join a project by slug"""
