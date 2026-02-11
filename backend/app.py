@@ -85,13 +85,15 @@ app.register_blueprint(hardware_bp)
 
 from flask import send_from_directory
 
-@app.route("/")
-def serve():
-    return send_from_directory(app.static_folder, "index.html")
-
+@app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
-def static_proxy(path):
-    return send_from_directory(app.static_folder, path)
+def serve_react(path):
+    full_path = os.path.join(app.static_folder, path)
+
+    if path != "" and os.path.exists(full_path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, "index.html")
 
 
 # ----------------------
