@@ -11,9 +11,12 @@ print("🔥 FLASK FILE LOADED 🔥")
 # ----------------------
 # Flask setup
 # ----------------------
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+FRONTEND_BUILD = os.path.abspath(os.path.join(BASE_DIR, "..", "frontend", "build"))
+
 app = Flask(
     __name__,
-    static_folder="../frontend/build",
+    static_folder=FRONTEND_BUILD,
     static_url_path=""
 )
 
