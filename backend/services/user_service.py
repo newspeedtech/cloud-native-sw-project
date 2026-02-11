@@ -3,7 +3,7 @@ from backend.repositories.user_repo import (
     find_user_by_user_id,
     create_user as create_user_repo
 )
-from cipher import encrypt, decrypt
+from backend.cipher import encrypt, decrypt
 from flask_jwt_extended import create_access_token
 
 
